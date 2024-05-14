@@ -6,7 +6,7 @@ from .models import degreecertificates
 class userserializer(serializers.ModelSerializer):
     class Meta:
         model=user
-        fields = ["id","email","phone","user_image","dept","gender","first_name","last_name","usertype"] 
+        fields = ["id","email","phone","user_image","dept","gender","first_name","last_name","usertype","password","username"] 
 
 class deptserializer(serializers.ModelSerializer):
     class Meta:

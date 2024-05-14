@@ -1,14 +1,23 @@
 from django.shortcuts import render
 from .models import user
+from .models import dept
 from .models import degreecertificates
 from .serializers import userserializer
 from .serializers import degreeimgserializer
+from .serializers import deptserializer
 from django.core.mail import send_mail
 import random
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
+
+
+
+    
 
 @api_view(['POST'])
 def Register(request):
@@ -23,10 +32,9 @@ def Register(request):
         dept=serializer.validated_data.get('dept')
         image = request.FILES.get('profileimg')
         gender=serializer.validated_data.get('gender')
-        otp = ''.join(random.choices('0123456789', k=6))
-        username = first + otp
-        password = otp
-        sendemail(email, otp)
+        password=serializer.validated_data.get('password')
+        username = serializer.validated_data.get('username')
+        sendemail(email, password)
         userdata=user.objects.create_user(email=email,phone=phone,user_image=image,dept=dept,gender=gender,first_name=first,last_name=second,usertype=usertype1,username=username, password=password)
         images = request.FILES.getlist('image')
         for image in images:
@@ -55,8 +63,36 @@ def sendemail(email, otp):
     sender = "skannan300@gmail.com"
     send_mail(subject, message, sender, [email])
 
+
+
 @api_view(['GET'])
 def Users(request):
     users=user.objects.all()
     serializer=userserializer(users,many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def Departments(request):
+    depts=dept.objects.all()
+    serializer=deptserializer(depts,many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def Loginview(request):
+    username=request.data['username']
+    password=request.data['password']
+
+    user=authenticate(username=username,password=password)
+
+    if user:
+        refresh=RefreshToken.for_user(user)
+        if user.is_superuser:
+            refresh.payload["user"]=user.is_superuser 
+        if user.usertype=='Trainer':     
+            refresh.payload["user"]=user.usertype
+        if user.usertype=='Trainee':     
+            refresh.payload["user"]=user.usertype    
+        return Response({"token":str(refresh.access_token)})
+    else:
+        return Response({"error":"Invalid Credentials"})
