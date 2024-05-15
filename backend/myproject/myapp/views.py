@@ -12,6 +12,9 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.shortcuts import get_object_or_404
+from django.shortcuts import get_list_or_404
+from django.shortcuts import get_list_or_404
 
 
 
@@ -96,3 +99,18 @@ def Loginview(request):
         return Response({"token":str(refresh.access_token)})
     else:
         return Response({"error":"Invalid Credentials"})
+    
+@api_view(['GET','PUT'])
+def Profiledetails(request,pk):
+    userprofile=get_object_or_404(user,id=pk)
+
+    if request.method=="GET":
+        serializer=userserializer(userprofile)
+        return Response(serializer.data)
+    
+    elif request.method == "PATCH":
+        serializer = userserializer(userprofile, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
