@@ -3,10 +3,12 @@ import { jwtDecode } from "jwt-decode";
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import Dashboard from '../components/manager/dashboard';
+import Dashboard1 from "../components/manager/dashboard1";
 
 function Managerpage(){
     const [sidenav, setSidenav] = useState(true);
     const[toggledashboard,setToggleDashboard]=useState(false)
+    const[toggleusers,setToggleUsers]=useState(false)
     const[userprofile,setUserprofile]=useState([])
 
 
@@ -16,8 +18,17 @@ function Managerpage(){
 
     const dashboard=()=>{
         setToggleDashboard(true)
+        setToggleUsers(false)
 
     }
+    const users=()=>{
+        setToggleUsers(true)
+        setToggleDashboard(false)
+
+    }
+    const updateUserProfile = (updatedProfile) => {
+        setUserprofile(updatedProfile);
+    };
 
 
     useEffect(() => {
@@ -32,6 +43,30 @@ function Managerpage(){
             console.log("error", error);
         });
     }, []);
+
+    const fetchUserProfile = () => {
+        const token=Cookies.get('token')
+        const decoded=jwtDecode(token)
+        axios.get('http://127.0.0.1:8000/myapp/profiledetails/'+decoded.user_id)
+        .then(response => {
+            setUserprofile(response.data);
+            console.log(response.data)
+        })
+        .catch(error => {
+            console.log("Error fetching user profile:", error);
+        });
+    };
+
+    useEffect(() => {
+        fetchUserProfile();
+    }, [toggleusers, toggledashboard]);
+
+    const updateUserProfileImage = (newImage) => {
+        setUserprofile(prevState => ({
+            ...prevState,
+            user_image: newImage
+        }));
+    };
 
     return(
         <>
@@ -70,8 +105,7 @@ function Managerpage(){
                 {sidenav &&
                 <div
                     id="sidebar"
-                    className="bg-white h-screen md:block shadow-2xl px-3 w-30 md:w-70 lg:w-70 overflow-x-hidden transition-transform duration-300 ease-in-out"
-                >
+                    className="bg-white h-screen md:block shadow-2xl px-3 w-70 overflow-x-hidden transition-transform duration-300 ease-in-out"                >
                     <div className="space-y-6 md:space-y-10 mt-10">
                     <div id="profile" className="space-y-3">
                         <img
@@ -105,7 +139,8 @@ function Managerpage(){
                         <span className="">Dashboard</span>
                         </a>
                         <a
-                        href=""
+                        
+                        onClick={users}
                         className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out"
                         >
                         <svg
@@ -233,7 +268,10 @@ function Managerpage(){
                 </div>
                 }
                 {toggledashboard &&
-                <Dashboard/>
+                <Dashboard userProfile={userprofile} fetchUserProfile={fetchUserProfile} updateUserProfileImage={updateUserProfileImage} updateUserProfile={updateUserProfile}/>
+                }
+                {toggleusers &&
+                    <Dashboard1/>
                 }
             
             </div>

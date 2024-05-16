@@ -108,7 +108,7 @@ def Profiledetails(request,pk):
         serializer=userserializer(userprofile)
         return Response(serializer.data)
     
-    elif request.method == "PATCH":
+    elif request.method == "PUT":
         serializer = userserializer(userprofile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
