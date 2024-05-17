@@ -2,33 +2,45 @@ import React, { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import Cookies from 'js-cookie';
 import axios from 'axios';
-import Dashboard from '../components/manager/dashboard';
-import Dashboard1 from "../components/manager/dashboard1";
+import Profile from "../components/manager/profile";
+import Dashboard from "../components/manager/dashboard";
+import { useNavigate } from "react-router-dom";
+
 
 function Managerpage(){
     const [sidenav, setSidenav] = useState(true);
-    const[toggledashboard,setToggleDashboard]=useState(false)
+    const[toggleprofile,setToggleprofile]=useState(false)
     const[toggleusers,setToggleUsers]=useState(false)
+    const[toggledashboard,setToggleDashboard]=useState(true)
     const[userprofile,setUserprofile]=useState([])
+    const [showDropdown, setShowDropdown] = useState(false);
+
+    const navigatee=useNavigate()
+
+
 
 
     const toggleSidenav = () => {
         setSidenav(!sidenav);
     };
 
+    const profile=()=>{
+        setToggleprofile(true)
+        setToggleDashboard(false)
+        setShowDropdown(false)
+    }
+
     const dashboard=()=>{
         setToggleDashboard(true)
-        setToggleUsers(false)
-
+        setToggleprofile(false)
+    
     }
-    const users=()=>{
-        setToggleUsers(true)
-        setToggleDashboard(false)
 
-    }
     const updateUserProfile = (updatedProfile) => {
         setUserprofile(updatedProfile);
     };
+
+
 
 
     useEffect(() => {
@@ -68,6 +80,16 @@ function Managerpage(){
         }));
     };
 
+    const toggleDropdown = () => {
+        setShowDropdown(!showDropdown);
+    };
+
+    const handleLogout = () => {
+        setShowDropdown(false)
+        Cookies.remove('token')
+        navigatee('/login')
+    };
+
     return(
         <>
 
@@ -78,8 +100,14 @@ function Managerpage(){
                             <h1 className="text-purple-600 font-bold text-xl">Training Management System</h1>
                         </div>
                         <div className="relative block h-8 w-8 rounded-full overflow-hidden shadow focus:outline-none">
-                        <img src={`http://127.0.0.1:8000${userprofile.user_image}`} alt="User Profile"  className="h-full w-full object-cover" />
+                            <img src={`http://127.0.0.1:8000${userprofile.user_image}`} alt="User Profile"  className="h-full w-full object-cover cursor-pointer" onClick={toggleDropdown} />
                         </div>
+                        {showDropdown && (
+                                <div className="absolute  top-8 right-1 mt-2 w-auto bg-white rounded-md shadow-lg">
+                                    <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" onClick={profile}>Profile</a>
+                                    <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" onClick={handleLogout}>Logout</a>
+                                </div>
+                            )}
                     </div>
                 </header>
             </div>
@@ -105,9 +133,9 @@ function Managerpage(){
                 {sidenav &&
                 <div
                     id="sidebar"
-                    className="bg-white h-screen md:block shadow-2xl px-3 w-70 overflow-x-hidden transition-transform duration-300 ease-in-out"                >
+                    className="bg-white h-screen md:block shadow-2xl px-3 md:w-1/6 w-70 overflow-x-hidden transition-transform duration-300 ease-in-out"                >
                     <div className="space-y-6 md:space-y-10 mt-10">
-                    <div id="profile" className="space-y-3">
+                    <div id="profile" className="w-10/12 mx-auto">
                         <img
                         src={`http://127.0.0.1:8000${userprofile.user_image}`}
                         alt="Avatar user"
@@ -140,7 +168,6 @@ function Managerpage(){
                         </a>
                         <a
                         
-                        onClick={users}
                         className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out"
                         >
                         <svg
@@ -267,11 +294,11 @@ function Managerpage(){
                     </div>
                 </div>
                 }
-                {toggledashboard &&
-                <Dashboard userProfile={userprofile} fetchUserProfile={fetchUserProfile} updateUserProfileImage={updateUserProfileImage} updateUserProfile={updateUserProfile}/>
+                {toggleprofile &&
+                <Profile userProfile={userprofile} fetchUserProfile={fetchUserProfile} updateUserProfileImage={updateUserProfileImage} updateUserProfile={updateUserProfile}/>
                 }
-                {toggleusers &&
-                    <Dashboard1/>
+                {toggledashboard &&
+                    <Dashboard/>
                 }
             
             </div>

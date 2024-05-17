@@ -8,6 +8,7 @@ urlpatterns=[
     path('users/',views.Users,name="users"),
     path('departments/',views.Departments,name="departments"),
     path('profiledetails/<int:pk>',views.Profiledetails,name="profiledetails"),
+    path('verifypassword/',views.Verifypassword,name="verifypassword"),
 
 
 ]

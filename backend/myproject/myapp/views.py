@@ -114,3 +114,33 @@ def Profiledetails(request,pk):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+    
+@api_view(['POST','PUT'])
+def Verifypassword(request):
+        if request.method=="POST":
+            oldpass_entered = request.data.get('oldpass') 
+            user_id = request.data.get('userid') 
+            print(oldpass_entered,user_id)
+
+            try:
+                user1 = user.objects.get(id=user_id)
+                if user1.check_password(oldpass_entered):
+                    return Response({'message': 'Password is verified'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'error': 'Invalid Password'}, status=status.HTTP_400_BAD_REQUEST)
+            except user.DoesNotExist:
+                return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        elif request.method=="PUT":    
+            newpass_entered = request.data.get('newpass') 
+            user_id = request.data.get('userid') 
+            print(newpass_entered,user_id)
+
+            try:
+                user1 = user.objects.get(id=user_id)
+                user1.set_password(newpass_entered)
+                user1.save()
+                return Response({'message': 'Password updated successfully'}, status=status.HTTP_200_OK)
+            except user.DoesNotExist:
+                return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+
