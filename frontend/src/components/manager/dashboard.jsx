@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import { AiOutlineStock } from "react-icons/ai";
+import { TbTransactionBitcoin } from "react-icons/tb";
+import { MdCallToAction } from "react-icons/md";
+
 
 function Dashboard(){
 
@@ -22,8 +26,8 @@ function Dashboard(){
 
     return(
         <>
-            <div className="flex flex-col h-full w-full bg-gradient-to-r from-blue-50 to-blue-100 ">   
-                <div class="mb-12 w-11/12 h-11/12 flex flex-col  md:flex-row md:justify-evenly mt-10 ">
+            <div className="flex flex-col h-full w-full bg-gradient-to-r from-blue-50 to-blue-100 md:justify-center md:items-center ">   
+                <div class="mb-1 w-11/12 h-1/4 flex flex-col md:flex-row md:justify-evenly mt-10  ">
                     <div class=" flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md  ml-8 mb-9">
                         <div class="bg-clip-border mx-4 rounded-xl overflow-hidden bg-gradient-to-tr from-blue-600 to-blue-400 text-white shadow-blue-500/40 shadow-lg absolute -mt-4 grid h-16 w-16 place-items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="w-6 h-6 text-white">
@@ -90,8 +94,59 @@ function Dashboard(){
                             </p>
                         </div>
                     </div>
-                </div>  
-            </div>         
+                </div> 
+                <div class="mb-1 w-11/12 h-1/4 flex flex-col md:flex-row md:justify-evenly mt-1 md:mt-8 md:mb-8">
+                    <div class="w-full lg:w-6/12 xl:w-3/12 px-4 ml-3">
+                      <div class="relative flex flex-col min-w-0 break-words bg-white rounded-lg mb-6 xl:mb-0 shadow-lg">
+                         <div class="flex-auto p-4">
+                            <div class="flex flex-wrap">
+                               <div class="relative w-full pr-4 max-w-full flex-grow flex-1">
+                                  <h5 class="text-blueGray-400 uppercase font-bold text-xs">Traffic</h5>
+                                  <span class="font-bold text-xl">350,897</span>
+                               </div>
+                               <div class="relative w-auto pl-4 flex-initial">
+                                  <div class="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full bg-red-500"><i className="text-2xl"><AiOutlineStock /></i></div>
+                               </div>
+                            </div>
+                            <p class="text-sm text-blueGray-500 mt-4"><span class="text-emerald-500 mr-2"><i class="fas fa-arrow-up"></i> 3.48%</span><span class="whitespace-nowrap">Since last month</span></p>
+                         </div>
+                      </div>
+                    </div>
+                    <div class="w-full lg:w-6/12 xl:w-3/12 px-4 ml-3">
+                        <div class="relative flex flex-col min-w-0 break-words bg-white rounded-lg mb-6 xl:mb-0 shadow-lg">
+                            <div class="flex-auto p-4">
+                                <div class="flex flex-wrap">
+                                <div class="relative w-full pr-4 max-w-full flex-grow flex-1">
+                                    <h5 class="text-blueGray-400 uppercase font-bold text-xs">NEW USERS</h5>
+                                    <span class="font-bold text-xl">2,356</span>
+                                </div>
+                                <div class="relative w-auto pl-4 flex-initial">
+                                    <div class="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full bg-orange-500"><i className="text-2xl"><MdCallToAction /></i></div>
+                                </div>
+                                </div>
+                                <p class="text-sm text-blueGray-500 mt-4"><span class="text-red-500 mr-2"><i class="fas fa-arrow-down"></i> 3.48%</span><span class="whitespace-nowrap">Since last week</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-6/12 xl:w-3/12 px-4 ml-3">
+                        <div class="relative flex flex-col min-w-0 break-words bg-white rounded-lg mb-6 xl:mb-0 shadow-lg">
+                            <div class="flex-auto p-4">
+                                <div class="flex flex-wrap">
+                                <div class="relative w-full pr-4 max-w-full flex-grow flex-1">
+                                    <h5 class="text-blueGray-400 uppercase font-bold text-xs">SALES</h5>
+                                    <span class="font-bold text-xl">924</span>
+                                </div>
+                                <div class="relative w-auto pl-4 flex-initial">
+                                    <div class="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full bg-pink-500"><i className="text-2xl" ><TbTransactionBitcoin /></i></div>
+                                </div>
+                                </div>
+                                <p class="text-sm text-blueGray-500 mt-4"><span class="text-orange-500 mr-2"><i class="fas fa-arrow-down"></i> 1.10%</span><span class="whitespace-nowrap">Since yesterday</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+                 
         </>
     )
 } 

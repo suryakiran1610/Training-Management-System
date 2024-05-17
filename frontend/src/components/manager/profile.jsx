@@ -210,7 +210,7 @@ function Profile(props){
 
     return(
         <>
-        <div className="flex flex-col h-full w-full bg-gradient-to-r from-blue-50 to-blue-100 ">
+        <div className="flex flex-col md:h-full md:w-full h-screen w-full bg-gradient-to-r from-blue-50 to-blue-100 ">
             
             <div className="flex flex-col md:flex-row justify-center h-2/4 w-full " >
                 <div className="md:order-1 w-4/6 md:w-2/6 md:h-3/4 h-4/5 flex flex-col justify-center items-center md:mt-6 ml-9 shadow-2xl rounded-md bg-white mt-6">

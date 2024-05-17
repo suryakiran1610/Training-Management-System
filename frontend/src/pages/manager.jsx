@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import Profile from "../components/manager/profile";
 import Dashboard from "../components/manager/dashboard";
+import Users from "../components/manager/users";
 import { useNavigate } from "react-router-dom";
 
 
@@ -12,6 +13,7 @@ function Managerpage(){
     const[toggleprofile,setToggleprofile]=useState(false)
     const[toggleusers,setToggleUsers]=useState(false)
     const[toggledashboard,setToggleDashboard]=useState(true)
+    const[toggleallusers,setToggleallusers]=useState(false)
     const[userprofile,setUserprofile]=useState([])
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -28,12 +30,22 @@ function Managerpage(){
         setToggleprofile(true)
         setToggleDashboard(false)
         setShowDropdown(false)
+        setToggleallusers(false)
+
     }
 
     const dashboard=()=>{
         setToggleDashboard(true)
         setToggleprofile(false)
+        setToggleallusers(false)
+
     
+    }
+    const allusers=()=>{
+        setToggleallusers(true)
+        setToggleDashboard(false)
+        setToggleprofile(false)
+
     }
 
     const updateUserProfile = (updatedProfile) => {
@@ -112,7 +124,7 @@ function Managerpage(){
                 </header>
             </div>
 
-            <div id="view" className="h-screen w-full flex flex-row  "> 
+            <div id="view" className="md:h-screen w-full flex flex-row h-full "> 
                 <button
                     onClick={toggleSidenav}
                     className="p-2 border-2 bg-white rounded-md border-gray-200 shadow-lg text-gray-500 focus:bg-teal-500 focus:outline-none focus:text-white absolute  sm:hidden"
@@ -133,7 +145,7 @@ function Managerpage(){
                 {sidenav &&
                 <div
                     id="sidebar"
-                    className="bg-white h-screen md:block shadow-2xl px-3 md:w-1/6 w-70 overflow-x-hidden transition-transform duration-300 ease-in-out"                >
+                    className="bg-white h-screen md:block  px-3 md:w-1/6 w-70 overflow-x-hidden transition-transform duration-300 ease-in-out"                >
                     <div className="space-y-6 md:space-y-10 mt-10">
                     <div id="profile" className="w-10/12 mx-auto">
                         <img
@@ -167,7 +179,7 @@ function Managerpage(){
                         <span className="">Dashboard</span>
                         </a>
                         <a
-                        
+                        onClick={allusers}
                         className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out"
                         >
                         <svg
@@ -299,6 +311,9 @@ function Managerpage(){
                 }
                 {toggledashboard &&
                     <Dashboard/>
+                }
+                {toggleallusers &&
+                    <Users/>
                 }
             
             </div>
