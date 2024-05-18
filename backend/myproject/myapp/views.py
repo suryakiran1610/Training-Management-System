@@ -144,3 +144,19 @@ def Verifypassword(request):
             except user.DoesNotExist:
                 return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+def allUsersProfile(request):
+
+    usertype_entered = request.query_params.get('usertype') 
+    if usertype_entered:
+        usertype=user.objects.filter(usertype=usertype_entered)
+        serializer=userserializer(usertype,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)  
+
+@api_view(['DELETE'])
+def Userlistdelete(request,pk):
+    users=get_object_or_404(user,id=pk)
+    users.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)     

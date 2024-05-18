@@ -37,7 +37,6 @@ function Profile(props){
 
 
 
-
     useEffect(() => {
         const token=Cookies.get('token')
         const decoded=jwtDecode(token)
@@ -50,6 +49,7 @@ function Profile(props){
             console.log("error", error);
         });
     }, []);
+
 
     const handleNewPasswordChange = (e) => {
         const newPasswordValue = e.target.value;
