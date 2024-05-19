@@ -11,6 +11,8 @@ urlpatterns=[
     path('verifypassword/',views.Verifypassword,name="verifypassword"),
     path('allusersprofile/',views.allUsersProfile,name="allusersprofile"),
     path('userlistdelete/<int:pk>',views.Userlistdelete,name='userlistdelete'),
+    path('attendence/',views.Attendence,name="attendence"),
+
 
 
 

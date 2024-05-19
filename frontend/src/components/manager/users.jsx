@@ -191,10 +191,16 @@ function Users() {
     return (
         <>
             <div className="md:h-full h-screen w-4/6 md:w-full bg-gradient-to-r from-blue-50 to-blue-100">
-                <div className="flex w-full mt-2">
-                    <p className="cursor-pointer md:ml-1 ml-10 hover:text-blue-500" onClick={trainer}>Trainer / </p>
-                    <p className="cursor-pointer md:ml-1 hover:text-blue-500" onClick={trainee}>Trainee</p>
+                <div className="flex w-full">
+                    <div className="flex justify-start mt-2 flex-1">
+                        <p className="cursor-pointer md:ml-1 hover:text-blue-500" onClick={trainer}>Trainer / </p>
+                        <p className="cursor-pointer md:ml-1 hover:text-blue-500" onClick={trainee}>Trainee</p>
+                    </div>
+                    <div className="mt-2 flex justify-start flex-1">
+                        <p className="font-bold font text-2xl text-purple-600">USERS</p>
+                    </div>
                 </div>
+
                 <div className="flex flex-col md:flex-row md:justify-center h-full w-full">
                     {trainers && (
                         <section className="container mx-auto p-6 font-mono">

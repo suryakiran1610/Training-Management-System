@@ -2,9 +2,11 @@ from django.shortcuts import render
 from .models import user
 from .models import dept
 from .models import degreecertificates
+from .models import attendence
 from .serializers import userserializer
 from .serializers import degreeimgserializer
 from .serializers import deptserializer
+from .serializers import attendenceserializer
 from django.core.mail import send_mail
 import random
 from rest_framework.response import Response
@@ -159,4 +161,21 @@ def allUsersProfile(request):
 def Userlistdelete(request,pk):
     users=get_object_or_404(user,id=pk)
     users.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)     
+    return Response(status=status.HTTP_204_NO_CONTENT)    
+
+@api_view(['POST'])
+def Attendence(request):
+    serializer=attendenceserializer(data=request.data)
+    print(request.data)
+    if serializer.is_valid():
+        name =serializer.validated_data.get('username')
+        id=serializer.validated_data.get('userid')
+        dept=request.data.get('department')
+        date=serializer.validated_data.get('date')
+        status=serializer.validated_data.get('status')
+        attends=attendence.objects.create(username=name,userid=id,depatment=dept,date=date,status=status)
+        response_serializer =attendenceserializer(attends)
+        return Response(response_serializer.data)
+    else:
+        print("Serializer errors:", serializer.errors)
+        return Response(serializer.errors)

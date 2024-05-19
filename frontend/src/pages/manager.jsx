@@ -5,6 +5,7 @@ import axios from 'axios';
 import Profile from "../components/manager/profile";
 import Dashboard from "../components/manager/dashboard";
 import Users from "../components/manager/users";
+import Attendence from "../components/manager/attendence";
 import { useNavigate } from "react-router-dom";
 
 
@@ -14,6 +15,7 @@ function Managerpage(){
     const[toggleusers,setToggleUsers]=useState(false)
     const[toggledashboard,setToggleDashboard]=useState(true)
     const[toggleallusers,setToggleallusers]=useState(false)
+    const [toggleattendence,setToggleAttendence]=useState(false)
     const[userprofile,setUserprofile]=useState([])
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -31,6 +33,8 @@ function Managerpage(){
         setToggleDashboard(false)
         setShowDropdown(false)
         setToggleallusers(false)
+        setToggleAttendence(false)
+
 
     }
 
@@ -38,11 +42,22 @@ function Managerpage(){
         setToggleDashboard(true)
         setToggleprofile(false)
         setToggleallusers(false)
+        setToggleAttendence(false)
+
 
     
     }
     const allusers=()=>{
         setToggleallusers(true)
+        setToggleDashboard(false)
+        setToggleprofile(false)
+        setToggleAttendence(false)
+
+
+    }
+    const Attendences=()=>{
+        setToggleAttendence(true)
+        setToggleallusers(false)
         setToggleDashboard(false)
         setToggleprofile(false)
 
@@ -195,8 +210,8 @@ function Managerpage(){
                         <span className="">Users</span>
                         </a>
                         <a
-                        href=""
-                        className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out"
+                        onClick={Attendences}
+                        className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out cursor-pointer"
                         >
                         <svg
                             className="w-6 h-6 fill-current inline-block"
@@ -314,6 +329,9 @@ function Managerpage(){
                 }
                 {toggleallusers &&
                     <Users/>
+                }
+                {toggleattendence  &&
+                    <Attendence/>
                 }
             
             </div>

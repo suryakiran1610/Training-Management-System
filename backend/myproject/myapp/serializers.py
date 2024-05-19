@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import user
 from .models import dept
 from .models import degreecertificates
+from .models import attendence
 
 class userserializer(serializers.ModelSerializer):
     class Meta:
@@ -18,3 +19,8 @@ class degreeimgserializer(serializers.ModelSerializer):
         model=degreecertificates
         fields = '__all__'           
 
+class attendenceserializer(serializers.ModelSerializer):
+    class Meta:
+        model=attendence
+        fields = '__all__'   
+    

@@ -16,3 +16,10 @@ class user(AbstractUser):
 class degreecertificates(models.Model):
     degreeimage=models.ImageField(upload_to='degree_image/',null=True,blank=True)  
     userid=models.ForeignKey(user,on_delete=models.CASCADE,null=True,blank=True)
+
+class attendence(models.Model):
+    username=models.CharField(max_length=150,null=True,blank=True)
+    userid=models.IntegerField(null=True,blank=True)
+    depatment=models.CharField(max_length=150,null=True,blank=True)
+    date=models.DateField()
+    status=models.CharField(max_length=150,null=True,blank=True)
