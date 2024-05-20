@@ -179,3 +179,21 @@ def Attendence(request):
     else:
         print("Serializer errors:", serializer.errors)
         return Response(serializer.errors)
+    
+@api_view(['GET'])
+def Trainerattendence(request):
+    trainerattendence=attendence.objects.all()
+    serializer=attendenceserializer(trainerattendence,many=True)
+    return Response(serializer.data)   
+
+@api_view(['GET'])
+def AllUsersProfilefilter(request):
+
+    usertype_entered = request.query_params.get('usertype') 
+    userdept_entered = request.query_params.get('depts') 
+    if usertype_entered:
+        usertype=user.objects.filter(usertype=usertype_entered,dept=userdept_entered)
+        serializer=userserializer(usertype,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)  

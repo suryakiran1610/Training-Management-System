@@ -12,7 +12,8 @@ urlpatterns=[
     path('allusersprofile/',views.allUsersProfile,name="allusersprofile"),
     path('userlistdelete/<int:pk>',views.Userlistdelete,name='userlistdelete'),
     path('attendence/',views.Attendence,name="attendence"),
-
+    path('trainerattendence/',views.Trainerattendence,name="trainerattendence"),
+    path('allUsersProfilefilter/',views.AllUsersProfilefilter,name="allUsersProfilefilter"),
 
 
 
