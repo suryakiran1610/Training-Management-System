@@ -254,7 +254,7 @@ function Profile(props){
                             <p className="ml-2">{userprofile.username}</p>
                         </div>
                     </div>
-                    <div>
+                    <div className="md:flex-row flex flex-col">
                         <button onClick={edit} type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm md:px-6 px-4 md:py-2.0 py-1.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Edit Profile</button>
                         <button  onClick={editpassword}type="button" className="text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm md:px-6 px-4 md:py-2.0 py-1.5 text-center me-2 mb-2 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">Chanage Password</button>
                     </div>
@@ -262,7 +262,7 @@ function Profile(props){
             </div>
             {toggleedit &&
                 <div className="flex  h-2/3 w-full mt-8" >
-                    <div className="md:order-1 w-11/12 md:w-2/5 md:h-4/5 h-4/6 flex flex-col justify-center items-center ml-3 shadow-2xl rounded-xl bg-white">
+                <div className="md:order-1 w-11/12 md:w-2/5 md:h-4/5 h-4/6 flex flex-col justify-center items-center ml-3 shadow-2xl rounded-xl bg-white">
                         <form onSubmit={handlesubmit} className=" flex  flex-col justify-center items-center">
                             <h1 className="font-serif font-bold mb-3">Edit Profile</h1>
                             <div className="flex mb-1 w-11/12 justify-evenly">
@@ -309,7 +309,7 @@ function Profile(props){
                             (verificationStatus ? verificationStatus : 'Verify')}</p>
                         </div>
                         <form onSubmit={handlepasswordsubmit} className=" flex w-full flex-col justify-center items-center">
-                        <div className="flex mb-1 justify-center w-11/12">
+                        <div className="flex justify-center mb-4 w-11/12 items-center">
                             <label className="mr-1" >New Password:</label>
                             <input type="password" onClick={passcriteria} onChange={handleNewPasswordChange}  className="bg-slate-200 rounded-md border-none focus:outline-none md:w-auto w-5/12 mr-7" />
                         </div>

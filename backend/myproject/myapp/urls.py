@@ -11,9 +11,20 @@ urlpatterns=[
     path('verifypassword/',views.Verifypassword,name="verifypassword"),
     path('allusersprofile/',views.allUsersProfile,name="allusersprofile"),
     path('userlistdelete/<int:pk>',views.Userlistdelete,name='userlistdelete'),
+
     path('attendence/',views.Attendence,name="attendence"),
     path('trainerattendence/',views.Trainerattendence,name="trainerattendence"),
     path('allUsersProfilefilter/',views.AllUsersProfilefilter,name="allUsersProfilefilter"),
+    path('filterrainerattendence/',views.Filterrainerattendence,name="filterrainerattendence"),
+    
+    path('traineettendencepost/',views.Traineettendencepost,name="traineettendencepost"),
+    path('traineeattendence/',views.Traineeattendence,name="traineeattendence"),
+    path('alltraineeUsersProfilefilter/',views.AlltraineeUsersProfilefilter,name="alltraineeUsersProfilefilter"),
+    path('filterraineeattendence/',views.Filterraineeattendence,name="filterraineeattendence"),
+
+
+
+
 
 
 

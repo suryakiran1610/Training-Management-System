@@ -190,7 +190,7 @@ function Users() {
 
     return (
         <>
-            <div className="md:h-full h-screen w-4/6 md:w-full bg-gradient-to-r from-blue-50 to-blue-100">
+            <div className="md:h-full h-screen w-3/4 md:w-full bg-gradient-to-r from-blue-50 to-blue-100">
                 <div className="flex w-full">
                     <div className="flex justify-start mt-2 flex-1">
                         <p className="cursor-pointer md:ml-1 hover:text-blue-500" onClick={trainer}>Trainer / </p>

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
-import * as React from 'react';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
@@ -23,6 +22,37 @@ function Attendence() {
     const [viewtraineeattendence,setViewtraineeattendence]=useState(false)
     const [selectedDate, setSelectedDate] = useState(null);
     const [displaytrainerattendence,setDisplaytrainerattendence]=useState([])
+    const [attendenceon,setAttendenceon]=useState(false)
+
+    const [selecttab,setSelecttab]=useState(false)
+    const [deptss, setDeptss] = useState([]);
+    const [department,setDepartment]=useState("")
+    const [filteredusers,setFilteredusers]=useState([])
+    const [user,setUser]=useState("")
+    const [filterattendence,setFilterattendence]=useState([])
+    const [allFilteredusers,setAllFilteredusers]=useState([])
+
+    const [deptss1, setDeptss1] = useState([]);
+    const [selecttab1,setSelecttab1]=useState(false)
+    const [department1,setDepartment1]=useState("")
+    const [user1,setUser1]=useState("")
+    const [filteredusers1,setFilteredusers1]=useState([])
+    const [filterattendence1,setFilterattendence1]=useState([])
+    const [allFilteredusers1,setAllFilteredusers1]=useState([])
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
 
 
     useEffect(() => {
@@ -40,7 +70,10 @@ function Attendence() {
         .catch(error => {
             console.log("error", error);
         });
+        
     }, []);
+
+   
 
     const addattendencetab = () => {
         setTrainerattendence(true);
@@ -48,6 +81,9 @@ function Attendence() {
         setShowattends(false)
         setViewtrainerattendence(false)
         setViewtraineeattendence(false)
+        setAttendenceon(true)
+        setSelecttab(false)
+
 
         const type = { usertype: "Trainer" };
 
@@ -96,6 +132,60 @@ function Attendence() {
         }
     }, [dept]);
 
+    useEffect(() => {
+        if (department && department !== "All") {
+            const type = { usertype: "Trainer", depts: department };
+    
+            axios.get('http://127.0.0.1:8000/myapp/allUsersProfilefilter/', { params: type })
+                .then(response => {
+                    setFilteredusers(response.data)
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.log("error", error);
+                });
+        }
+        else {
+            const type = { usertype: "Trainer" };
+            axios.get('http://127.0.0.1:8000/myapp/allusersprofile/', { params: type })
+                .then(response => {
+                    setFilteredusers(response.data);
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.log("error", error);
+                });
+        }
+    }, [department]);
+
+    useEffect(() => {
+        if (department1 && department1 !== "All") {
+            const type = { usertype: "Trainee", depts: department1 };
+    
+            axios.get('http://127.0.0.1:8000/myapp/allUsersProfilefilter/', { params: type })
+                .then(response => {
+                    setFilteredusers1(response.data)
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.log("error", error);
+                });
+        }
+        else {
+            const type = { usertype: "Trainee" };
+            axios.get('http://127.0.0.1:8000/myapp/allusersprofile/', { params: type })
+                .then(response => {
+                    setFilteredusers1(response.data);
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.log("error", error);
+                });
+        }
+    }, [department1]);
+
+
+
 
     const markAttendance = (status, deptt, date, id, name) => {
         const formData = new FormData();
@@ -119,46 +209,121 @@ function Attendence() {
     }
 
     const trainerattendenceshow=()=>{
+        setSelecttab(true)
         setTrainerattendence(false);
         setViewbtn(false)
-        setViewtrainerattendence(true)
+        setViewtrainerattendence(false)
         setViewtraineeattendence(false)
+        setSelecttab1(false)
 
-        axios.get('http://127.0.0.1:8000/myapp/trainerattendence/')
-        .then(response => {
-            console.log(response.data);
-            setDisplaytrainerattendence(response.data)
-        })
-        .catch(error => {
-            console.log("error", error);
-        });
 
-        const type = { usertype: "Trainer" };
-
-        axios.get('http://127.0.0.1:8000/myapp/allusersprofile/', { params: type })
+        axios.get('http://127.0.0.1:8000/myapp/departments/')
             .then(response => {
+                setDeptss(response.data);
                 console.log(response.data);
             })
             .catch(error => {
                 console.log("error", error);
             });
+        
+            const type = { usertype: "Trainer" };
+            axios.get('http://127.0.0.1:8000/myapp/allusersprofile/', { params: type })
+                .then(response => {
+                    setAllFilteredusers(response.data);
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.log("error", error);
+                });    
+    }
 
-        axios.get('http://127.0.0.1:8000/myapp/departments/')
-            .then(response => {
-                console.log(response.data);
-            })
-            .catch(error => {
-                console.log("error", error);
-            });    
+    const toggleattdsuser=()=>{
+
+        const type = { userattendence: user };
+
+        axios.get('http://127.0.0.1:8000/myapp/filterrainerattendence/', { params: type })
+        .then(response => {
+            console.log(response.data);
+            setFilterattendence(response.data)
+            setViewtrainerattendence(true)
+        })
+        .catch(error => {
+            console.log("error", error);
+        });
 
     }
+    const getDateClass = (date) => {
+        const formattedDate = date.toLocaleDateString('en-CA');
+        const attendanceRecords = filterattendence.filter(att => att.date === formattedDate);
+
+        if (attendanceRecords.length > 0) {
+            const isPresent = attendanceRecords.some(att => att.status === 'present');
+            return isPresent ? 'present' : 'absent';
+        }
+
+        return '';
+    };
+    
+
+    
+
     const traineeattendenceshow=()=>{
         setTrainerattendence(false);
         setViewbtn(false)
         setViewtrainerattendence(false)
         setViewtraineeattendence(false)
+        setSelecttab(false)
+        setSelecttab1(true)
+
+        axios.get('http://127.0.0.1:8000/myapp/departments/')
+            .then(response => {
+                setDeptss1(response.data);
+                console.log("new",response.data);
+            })
+            .catch(error => {
+                console.log("error", error);
+            });
+        
+            const type = { usertype: "Trainee" };
+            axios.get('http://127.0.0.1:8000/myapp/allusersprofile/', { params: type })
+                .then(response => {
+                    setAllFilteredusers1(response.data);
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.log("error", error);
+                });    
+    }
+
+    const toggleattdsuser1=()=>{
+
+        const type = { userattendence: user1 };
+
+        axios.get('http://127.0.0.1:8000/myapp/filterraineeattendence/', { params: type })
+        .then(response => {
+            console.log(response.data);
+            setFilterattendence1(response.data)
+            setViewtraineeattendence(true)
+        })
+        .catch(error => {
+            console.log("error", error);
+        });
 
     }
+    const getDateClass1 = (date) => {
+        const formattedDate = date.toLocaleDateString('en-CA');
+        const attendanceRecords = filterattendence1.filter(att => att.date === formattedDate);
+
+        if (attendanceRecords.length > 0) {
+            const isPresent = attendanceRecords.some(att => att.status === 'present');
+            return isPresent ? 'present' : 'absent';
+        }
+
+        return '';
+    };
+    
+
+
 
     return(
         <>
@@ -173,6 +338,8 @@ function Attendence() {
                                     setViewbtn(false);
                                     setShowattends(true);
                                     setTrainerattendence(false)
+                                    setAttendenceon(false)
+                                    setSelecttab(false)
                                 }}
                             >
                                 View
@@ -185,16 +352,18 @@ function Attendence() {
                             </>
                         )}
                     </div>
+                    { attendenceon &&
                     <div className="mt-2 flex flex-1 justify-center">
-                        <p className="font-bold font md:text-2xl text-xl text-purple-600">Attendance on {currentDate}</p>
+                        <p className="font-bold font md:text-2xl text-lg text-purple-600">Attendance on {currentDate}</p>
                     </div>
+                    }
                 </div>
 
                 {trainerattendence && (
                     <div className="flex flex-col md:flex-row justify-center h-2/4 w-full md:mt-1">
                         <div className="container mx-auto px-4 sm:px-8 md:mt-1">
                             <div className="py-8 md:mt-1">
-                                <div className="my-2 flex sm:flex-row flex-col md:mt-1 ">
+                                <div className="my-2 flex sm:flex-row flex-col md:mt-1 mt-9 ">
                                     <div className="flex">
                                         <div className="relative">
                                             <select onChange={(e) => { setDept(e.target.value) }}
@@ -257,7 +426,7 @@ function Attendence() {
                                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                                             <div className="flex items-center">
                                                                 {getAttendance.some(att => att.userid === profile.id && att.date === currentDate) ? (
-                                                                    <span className={`w-14 rounded-sm h-7 flex justify-center items-center text-white ${
+                                                                    <span className={`w-20 rounded-lg h-7 flex justify-center items-center text-white ${
                                                                         getAttendance.find(att => att.userid === profile.id && att.date === currentDate).status === 'present'
                                                                         ? 'bg-green-600'
                                                                         : 'bg-red-600'
@@ -291,17 +460,136 @@ function Attendence() {
                             </div>
                         </div>
                     </div>
-                )}   
-                {viewtrainerattendence &&(
-                    <div className="flex flex-col md:flex-row justify-center h-2/4 w-full md:mt-1 overflow-hidden">
-                    <DatePicker
-                         selected={selectedDate}
-                         onChange={(date) => setSelectedDate(date)}
-                         inline
-                         calendarClassName="custom-calendar"
-                     />
-                 </div>
-             )}
+                )}  
+                {selecttab && (
+                    <div className="flex flex-col md:flex-row justify-evenly mt-8 w-11/12 md:w-3/5">
+                        <div className="mb-2 flex justify-between items-center relative z-10">
+                            <label className="font-medium mr-2">Department</label>
+                            <select onChange={(e) => { setDepartment(e.target.value) }}
+                                className="w-full text-sm md:text-base mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-yellow-400 focus:border-yellow-400">
+                                <option>All</option>
+                                {deptss.map((department, index) => (
+                                    <option key={index}>{department.dept}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="mb-2 flex justify-center items-center relative z-10">
+                            <label className="text-sm font-medium mr-2">Name</label>
+                            <select
+                                onChange={(e) => setUser(e.target.value)}
+                                className="w-full text-sm md:text-base mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-yellow-400 focus:border-yellow-400"
+                            >
+                                <option >Select User</option>
+                                {filteredusers.map((user, index) => (
+                                    <option key={index} value={user.id}>{user.first_name + " " + user.last_name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="mb-2 flex justify-center items-center relative z-10 ">
+                        <button type="button" onClick={toggleattdsuser} className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm w-14 h-7 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">GO</button>
+                        </div>   
+                    </div>
+                )}
+                {viewtrainerattendence && (
+                    <div className="mt-6">
+                        <div className="md:w-3/5 w-3/4 flex justify-end">
+                        <div className="w-full md:w-2/4 md:h-16 flex justify-start md:mb-3 mb-9 rounded-l-full rounded-r-full" style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.7)' }}>
+                            {allFilteredusers.map((user) => {
+                                if (filterattendence.some((attendance) => attendance.userid === user.id)) {
+                                    const attendanceRecord = filterattendence.find((attendance) => attendance.userid === user.id);
+                                        return (
+                                            <div className="flex justify-center items-center">
+                                                <div key={user.id} className="relative block h-14 w-14 rounded-full overflow-hidden shadow focus:outline-none">
+                                                    <img src={`http://127.0.0.1:8000${user.user_image}`} alt="User Profile" className="h-full w-full object-cover cursor-pointer"/>
+                                                </div>
+                                                <div className="ml-3 md:ml-9 md:text-xl font-serif">
+                                                    <p>{user.first_name + " " + user.last_name}</p>
+                                                </div>
+                                            </div>
+                                        );
+                                }
+                                return null;
+                            })}
+                        </div>
+                        </div>
+                        <div className="flex flex-col md:flex-row justify-center h-2/4 w-full md:mt-9 overflow-hidden">
+                            <div className="datepicker-container bg-white border border-gray-200 rounded-md shadow-lg font-sans w-full md:w-3/5 flex flex-col md:flex-row">
+                                <DatePicker
+                                    selected={selectedDate}
+                                    inline
+                                    calendarClassName="custom-calendar"
+                                    dayClassName={date => getDateClass(date)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+
+                {selecttab1 && (
+                    <div className="flex flex-col md:flex-row justify-evenly mt-8 w-11/12 md:w-3/5">
+                        <div className="mb-2 flex justify-between items-center relative z-10">
+                            <label className="font-medium mr-2">Department</label>
+                            <select onChange={(e) => { setDepartment1(e.target.value) }}
+                                className="w-full text-sm md:text-base mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-yellow-400 focus:border-yellow-400">
+                                <option>All</option>
+                                {deptss1.map((department, index) => (
+                                    <option key={index}>{department.dept}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="mb-2 flex justify-center items-center relative z-10">
+                            <label className="text-sm font-medium mr-2">Name</label>
+                            <select
+                                onChange={(e) => setUser1(e.target.value)}
+                                className="w-full text-sm md:text-base mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-yellow-400 focus:border-yellow-400"
+                            >
+                                <option >Select User</option>
+                                {filteredusers1.map((user, index) => (
+                                    <option key={index} value={user.id}>{user.first_name + " " + user.last_name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="mb-2 flex justify-center items-center relative z-10 ">
+                        <button type="button" onClick={toggleattdsuser1} className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm w-14 h-7 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">GO</button>
+                        </div>   
+                    </div>
+                )}
+                {viewtraineeattendence && (
+                    <div className="mt-6">
+                        <div className="md:w-3/5 w-3/4 flex justify-end">
+                        <div className="w-full md:w-2/4 md:h-16 flex justify-start md:mb-3 mb-9 rounded-l-full rounded-r-full" style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.7)' }}>
+                            {allFilteredusers1.map((user) => {
+                                if (filterattendence1.some((attendance) => attendance.userid === user.id)) {
+                                    const attendanceRecord = filterattendence1.find((attendance) => attendance.userid === user.id);
+                                        return (
+                                            <div className="flex justify-center items-center">
+                                                <div key={user.id} className="relative block h-14 w-14 rounded-full overflow-hidden shadow focus:outline-none">
+                                                    <img src={`http://127.0.0.1:8000${user.user_image}`} alt="User Profile" className="h-full w-full object-cover cursor-pointer"/>
+                                                </div>
+                                                <div className="ml-3 md:ml-9 md:text-xl font-serif">
+                                                    <p>{user.first_name + " " + user.last_name}</p>
+                                                </div>
+                                            </div>
+                                        );
+                                }
+                                return null;
+                            })}
+                        </div>
+                        </div>
+                        <div className="flex flex-col md:flex-row justify-center h-2/4 w-full md:mt-9 overflow-hidden">
+                            <div className="datepicker-container bg-white border border-gray-200 rounded-md shadow-lg font-sans w-full md:w-3/5 flex flex-col md:flex-row">
+                                <DatePicker
+                                    selected={selectedDate}
+                                    inline
+                                    calendarClassName="custom-calendar"
+                                    dayClassName={date => getDateClass1(date)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
+    
             </div>        
         </>
     )

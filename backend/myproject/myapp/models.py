@@ -23,3 +23,10 @@ class attendence(models.Model):
     depatment=models.CharField(max_length=150,null=True,blank=True)
     date=models.DateField()
     status=models.CharField(max_length=150,null=True,blank=True)
+
+class traineeattendence(models.Model):
+    username=models.CharField(max_length=150,null=True,blank=True)
+    userid=models.IntegerField(null=True,blank=True)
+    depatment=models.CharField(max_length=150,null=True,blank=True)
+    date=models.DateField()
+    status=models.CharField(max_length=150,null=True,blank=True)    

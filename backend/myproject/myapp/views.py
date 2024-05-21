@@ -3,10 +3,12 @@ from .models import user
 from .models import dept
 from .models import degreecertificates
 from .models import attendence
+from .models import traineeattendence
 from .serializers import userserializer
 from .serializers import degreeimgserializer
 from .serializers import deptserializer
 from .serializers import attendenceserializer
+from .serializers import traineeattendenceserializer
 from django.core.mail import send_mail
 import random
 from rest_framework.response import Response
@@ -191,9 +193,70 @@ def AllUsersProfilefilter(request):
 
     usertype_entered = request.query_params.get('usertype') 
     userdept_entered = request.query_params.get('depts') 
+    print(userdept_entered)
     if usertype_entered:
         usertype=user.objects.filter(usertype=usertype_entered,dept=userdept_entered)
         serializer=userserializer(usertype,many=True)
         return Response(serializer.data)  
     else:
         return Response({"error": "User type not provided"}, status=400)  
+
+@api_view(['GET'])
+def Filterrainerattendence(request):
+
+    user_entered = request.query_params.get('userattendence')
+    if user_entered:
+        users=attendence.objects.filter(userid=user_entered)
+        serializer=attendenceserializer(users,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)  
+
+
+
+@api_view(['POST'])
+def Traineettendencepost(request):
+    serializer=traineeattendenceserializer(data=request.data)
+    print(request.data)
+    if serializer.is_valid():
+        name =serializer.validated_data.get('username')
+        id=serializer.validated_data.get('userid')
+        dept=request.data.get('department')
+        date=serializer.validated_data.get('date')
+        status=serializer.validated_data.get('status')
+        attends=traineeattendence.objects.create(username=name,userid=id,depatment=dept,date=date,status=status)
+        response_serializer =traineeattendenceserializer(attends)
+        return Response(response_serializer.data)
+    else:
+        print("Serializer errors:", serializer.errors)
+        return Response(serializer.errors)    
+
+@api_view(['GET'])
+def Traineeattendence(request):
+    traineeeattendence=traineeattendence.objects.all()
+    serializer=traineeattendenceserializer(traineeeattendence,many=True)
+    return Response(serializer.data)      
+
+@api_view(['GET'])
+def AlltraineeUsersProfilefilter(request):
+
+    usertype_entered = request.query_params.get('usertype') 
+    userdept_entered = request.query_params.get('depts') 
+    print(userdept_entered)
+    if usertype_entered:
+        usertype=user.objects.filter(usertype=usertype_entered,dept=userdept_entered)
+        serializer=userserializer(usertype,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)     
+
+@api_view(['GET'])
+def Filterraineeattendence(request):
+
+    user_entered = request.query_params.get('userattendence')
+    if user_entered:
+        users=traineeattendence.objects.filter(userid=user_entered)
+        serializer=traineeattendenceserializer(users,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)      
