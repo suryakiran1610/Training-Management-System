@@ -23,6 +23,7 @@ function Attendence() {
     const [selectedDate, setSelectedDate] = useState(null);
     const [displaytrainerattendence,setDisplaytrainerattendence]=useState([])
     const [attendenceon,setAttendenceon]=useState(false)
+    const [titleon,seTtitleon]=useState(true)
 
     const [selecttab,setSelecttab]=useState(false)
     const [deptss, setDeptss] = useState([]);
@@ -76,8 +77,10 @@ function Attendence() {
    
 
     const addattendencetab = () => {
+        seTtitleon(false)
         setTrainerattendence(true);
         setViewbtn(true)
+        setSelecttab1(false)
         setShowattends(false)
         setViewtrainerattendence(false)
         setViewtraineeattendence(false)
@@ -339,6 +342,7 @@ function Attendence() {
                                     setShowattends(true);
                                     setTrainerattendence(false)
                                     setAttendenceon(false)
+                                    seTtitleon(false)
                                     setSelecttab(false)
                                 }}
                             >
@@ -352,6 +356,11 @@ function Attendence() {
                             </>
                         )}
                     </div>
+                    {titleon &&
+                        <div className="mt-2 flex justify-center flex-1">
+                            <p className="font-bold font text-2xl text-purple-600">Attendance</p>
+                        </div>
+                    }
                     { attendenceon &&
                     <div className="mt-2 flex flex-1 justify-center">
                         <p className="font-bold font md:text-2xl text-lg text-purple-600">Attendance on {currentDate}</p>
@@ -499,11 +508,11 @@ function Attendence() {
                                     const attendanceRecord = filterattendence.find((attendance) => attendance.userid === user.id);
                                         return (
                                             <div className="flex justify-center items-center">
-                                                <div key={user.id} className="relative block h-14 w-14 rounded-full overflow-hidden shadow focus:outline-none">
+                                                <div key={user.id} className="relative block h-16 w-16 rounded-full overflow-hidden shadow focus:outline-none">
                                                     <img src={`http://127.0.0.1:8000${user.user_image}`} alt="User Profile" className="h-full w-full object-cover cursor-pointer"/>
                                                 </div>
                                                 <div className="ml-3 md:ml-9 md:text-xl font-serif">
-                                                    <p>{user.first_name + " " + user.last_name}</p>
+                                                    <p>{user.first_name + " " + user.last_name} - {user.dept}</p>
                                                 </div>
                                             </div>
                                         );
@@ -564,11 +573,11 @@ function Attendence() {
                                     const attendanceRecord = filterattendence1.find((attendance) => attendance.userid === user.id);
                                         return (
                                             <div className="flex justify-center items-center">
-                                                <div key={user.id} className="relative block h-14 w-14 rounded-full overflow-hidden shadow focus:outline-none">
+                                                <div key={user.id} className="relative block h-16 w-16 rounded-full overflow-hidden shadow focus:outline-none">
                                                     <img src={`http://127.0.0.1:8000${user.user_image}`} alt="User Profile" className="h-full w-full object-cover cursor-pointer"/>
                                                 </div>
                                                 <div className="ml-3 md:ml-9 md:text-xl font-serif">
-                                                    <p>{user.first_name + " " + user.last_name}</p>
+                                                    <p>{user.first_name + " " + user.last_name}  - {user.dept}</p>
                                                 </div>
                                             </div>
                                         );

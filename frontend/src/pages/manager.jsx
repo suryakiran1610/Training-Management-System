@@ -6,6 +6,8 @@ import Profile from "../components/manager/profile";
 import Dashboard from "../components/manager/dashboard";
 import Users from "../components/manager/users";
 import Attendence from "../components/manager/attendence";
+import Leave from "../components/manager/leave";
+import Departments from "../components/manager/departments";
 import { useNavigate } from "react-router-dom";
 
 
@@ -18,6 +20,8 @@ function Managerpage(){
     const [toggleattendence,setToggleAttendence]=useState(false)
     const[userprofile,setUserprofile]=useState([])
     const [showDropdown, setShowDropdown] = useState(false);
+    const [toggleleave,seTtoggleleave]=useState(false)
+    const [toggledepartment,setToggledepartment]=useState(false)
 
     const navigatee=useNavigate()
 
@@ -34,6 +38,9 @@ function Managerpage(){
         setShowDropdown(false)
         setToggleallusers(false)
         setToggleAttendence(false)
+        seTtoggleleave(false)
+        setToggledepartment(false)
+
 
 
     }
@@ -43,6 +50,9 @@ function Managerpage(){
         setToggleprofile(false)
         setToggleallusers(false)
         setToggleAttendence(false)
+        seTtoggleleave(false)
+        setToggledepartment(false)
+
 
 
     
@@ -52,11 +62,35 @@ function Managerpage(){
         setToggleDashboard(false)
         setToggleprofile(false)
         setToggleAttendence(false)
+        seTtoggleleave(false)
+        setToggledepartment(false)
+
 
 
     }
     const Attendences=()=>{
         setToggleAttendence(true)
+        setToggleallusers(false)
+        setToggleDashboard(false)
+        setToggleprofile(false)
+        seTtoggleleave(false)
+        setToggledepartment(false)
+
+
+    }
+    const Leaves=()=>{
+        seTtoggleleave(true)
+        setToggleAttendence(false)
+        setToggleallusers(false)
+        setToggleDashboard(false)
+        setToggleprofile(false)
+        setToggledepartment(false)
+
+    }
+    const Department=()=>{
+        setToggledepartment(true)
+        seTtoggleleave(false)
+        setToggleAttendence(false)
         setToggleallusers(false)
         setToggleDashboard(false)
         setToggleprofile(false)
@@ -228,8 +262,8 @@ function Managerpage(){
                         <span className="">Attendence</span>
                         </a>
                         <a
-                        href=""
-                        className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out"
+                        onClick={Leaves}
+                        className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out cursor-pointer"
                         >
                         <svg
                             className="w-6 h-6 fill-current inline-block"
@@ -247,8 +281,8 @@ function Managerpage(){
                         <span className="">Leave</span>
                         </a>
                         <a
-                        href=""
-                        className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out"
+                        onClick={Department}
+                        className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out cursor-pointer"
                         >
                         <svg
                             className="w-6 h-6 fill-current inline-block"
@@ -332,6 +366,12 @@ function Managerpage(){
                 }
                 {toggleattendence  &&
                     <Attendence/>
+                }
+                {toggleleave &&
+                    <Leave/>
+                }
+                {toggledepartment &&
+                    <Departments/>
                 }
             
             </div>

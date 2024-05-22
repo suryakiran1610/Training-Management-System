@@ -4,11 +4,13 @@ from .models import dept
 from .models import degreecertificates
 from .models import attendence
 from .models import traineeattendence
+from .models import leave
 from .serializers import userserializer
 from .serializers import degreeimgserializer
 from .serializers import deptserializer
 from .serializers import attendenceserializer
 from .serializers import traineeattendenceserializer
+from .serializers import leaveserializer
 from django.core.mail import send_mail
 import random
 from rest_framework.response import Response
@@ -99,7 +101,10 @@ def Loginview(request):
         if user.usertype=='Trainer':     
             refresh.payload["user"]=user.usertype
         if user.usertype=='Trainee':     
-            refresh.payload["user"]=user.usertype    
+            refresh.payload["user"]=user.usertype
+
+        refresh.payload["userfullname"] = user.first_name + " " + user.last_name 
+      
         return Response({"token":str(refresh.access_token)})
     else:
         return Response({"error":"Invalid Credentials"})
@@ -260,3 +265,92 @@ def Filterraineeattendence(request):
         return Response(serializer.data)  
     else:
         return Response({"error": "User type not provided"}, status=400)      
+    
+
+@api_view(['POST'])
+def Leavesubmit(request):
+    serializer=leaveserializer(data=request.data)
+    print(request.data)
+    if serializer.is_valid():
+        name =serializer.validated_data.get('username')
+        id=serializer.validated_data.get('userid')
+        dept=request.data.get('department')
+        fromdate1=serializer.validated_data.get('fromdate')
+        todate1=serializer.validated_data.get('todate')
+        status=serializer.validated_data.get('status')
+        type=serializer.validated_data.get('usertype')
+        msg=serializer.validated_data.get('message')
+        leaves=leave.objects.create(username=name,userid=id,depatment=dept,fromdate=fromdate1,todate=todate1,status=status,usertype=type,message=msg)
+        response_serializer =leaveserializer(leaves)
+        return Response(response_serializer.data)
+    else:
+        print("Serializer errors:", serializer.errors)
+        return Response(serializer.errors)  
+
+@api_view(['GET'])
+def Leavefilter(request):
+
+    usertype_entered = request.query_params.get('usertype') 
+    print(usertype_entered)
+    if usertype_entered:
+        usertype=leave.objects.filter(usertype=usertype_entered)
+        serializer=leaveserializer(usertype,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)      
+
+@api_view(['PUT'])
+def Changeleavestatus(request):
+    status_entered = request.data.get('status') 
+    user_id = request.data.get('userid') 
+    print(status_entered,user_id)
+    try:
+        leave_record = leave.objects.get(userid=user_id)
+        leave_record.status = status_entered
+        leave_record.save()
+        return Response({'message': 'status updated successfully'}, status=status.HTTP_200_OK)
+    except leave.DoesNotExist:
+        return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def AllUsersfilter(request):
+
+    usertype_entered = request.query_params.get('usertype') 
+    print(usertype_entered)
+    if usertype_entered:
+        usertype=user.objects.filter(usertype=usertype_entered)
+        serializer=userserializer(usertype,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400) 
+
+@api_view(['DELETE'])
+def Deptlistdelete(request,pk):
+    depts=get_object_or_404(dept,id=pk)
+    depts.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)        
+
+
+@api_view(['POST'])
+def Adddept(request):
+    serializer=deptserializer(data=request.data)
+    print(request.data)
+    if serializer.is_valid():
+        deptname=request.data.get('departname')
+        image = request.FILES.get('dept_image')
+        deptdata=dept.objects.create(dept=deptname,dept_image=image)
+        response_serializer = deptserializer(deptdata)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        print("Serializer errors:", serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+def Deptedit(request,pk):
+    userdept=get_object_or_404(dept,id=pk)
+    
+    serializer = deptserializer(userdept, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
