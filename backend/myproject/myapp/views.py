@@ -5,12 +5,14 @@ from .models import degreecertificates
 from .models import attendence
 from .models import traineeattendence
 from .models import leave
+from .models import batch
 from .serializers import userserializer
 from .serializers import degreeimgserializer
 from .serializers import deptserializer
 from .serializers import attendenceserializer
 from .serializers import traineeattendenceserializer
 from .serializers import leaveserializer
+from .serializers import batchserializer
 from django.core.mail import send_mail
 import random
 from rest_framework.response import Response
@@ -354,3 +356,24 @@ def Deptedit(request,pk):
         serializer.save()
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
+
+@api_view(['POST'])
+def AddBatch(request):
+    serializer = batchserializer(data=request.data)
+    print(request.data)
+    if serializer.is_valid():
+        dept1 = request.data.get('department')
+        trainer1=request.data.get('trainer')
+        trainerid1 = request.data.get('trainerid')
+        batchname1 = request.data.get('batchname')
+        traineeids = request.data.get('traineeid').split(',')
+        for trainee_id in traineeids:
+            batchdata = batch.objects.create(dept=dept1,trainer=trainer1,trainerid=trainerid1, batchname=batchname1, traineeid=trainee_id.strip()) 
+        response_serializer = batchserializer(batchdata)
+
+        return Response(response_serializer.data)
+    else:
+        print("Serializer errors:", serializer.errors)
+        return Response(serializer.errors)
+
+    

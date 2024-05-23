@@ -5,6 +5,7 @@ from .models import degreecertificates
 from .models import attendence
 from .models import traineeattendence
 from . models import leave
+from .models import batch
 
 class userserializer(serializers.ModelSerializer):
     class Meta:
@@ -34,3 +35,8 @@ class leaveserializer(serializers.ModelSerializer):
     class Meta:
         model=leave
         fields= '__all__'
+
+class batchserializer(serializers.ModelSerializer):
+    class Meta:
+        model=batch
+        fields= '__all__'        

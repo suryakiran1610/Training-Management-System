@@ -139,7 +139,7 @@ function Departments() {
         setToggleAdd(false);
         setToggleView(true);
         setEditDeptId(department.id);
-        setDeptname1(department.dept);  // Set the department name in the state
+        setDeptname1(department.dept);
     };
     
 

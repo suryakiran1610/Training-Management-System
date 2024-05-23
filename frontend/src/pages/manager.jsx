@@ -8,6 +8,7 @@ import Users from "../components/manager/users";
 import Attendence from "../components/manager/attendence";
 import Leave from "../components/manager/leave";
 import Departments from "../components/manager/departments";
+import Batch from "../components/manager/batch";
 import { useNavigate } from "react-router-dom";
 
 
@@ -22,6 +23,7 @@ function Managerpage(){
     const [showDropdown, setShowDropdown] = useState(false);
     const [toggleleave,seTtoggleleave]=useState(false)
     const [toggledepartment,setToggledepartment]=useState(false)
+    const [togglebatch,setTogglebatch]=useState(false)
 
     const navigatee=useNavigate()
 
@@ -40,6 +42,7 @@ function Managerpage(){
         setToggleAttendence(false)
         seTtoggleleave(false)
         setToggledepartment(false)
+        setTogglebatch(false)
 
 
 
@@ -52,6 +55,8 @@ function Managerpage(){
         setToggleAttendence(false)
         seTtoggleleave(false)
         setToggledepartment(false)
+        setTogglebatch(false)
+
 
 
 
@@ -64,6 +69,8 @@ function Managerpage(){
         setToggleAttendence(false)
         seTtoggleleave(false)
         setToggledepartment(false)
+        setTogglebatch(false)
+
 
 
 
@@ -75,6 +82,8 @@ function Managerpage(){
         setToggleprofile(false)
         seTtoggleleave(false)
         setToggledepartment(false)
+        setTogglebatch(false)
+
 
 
     }
@@ -85,10 +94,23 @@ function Managerpage(){
         setToggleDashboard(false)
         setToggleprofile(false)
         setToggledepartment(false)
+        setTogglebatch(false)
+
 
     }
     const Department=()=>{
         setToggledepartment(true)
+        seTtoggleleave(false)
+        setToggleAttendence(false)
+        setToggleallusers(false)
+        setToggleDashboard(false)
+        setToggleprofile(false)
+        setTogglebatch(false)
+    }
+
+    const Batches=()=>{
+        setTogglebatch(true)
+        setToggledepartment(false)
         seTtoggleleave(false)
         setToggleAttendence(false)
         setToggleallusers(false)
@@ -298,8 +320,8 @@ function Managerpage(){
                         </a>
                     
                         <a
-                        href=""
-                        className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out"
+                        onClick={Batches}
+                        className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out cursor-pointer"
                         >
                         <svg
                             className="w-6 h-6 fill-current inline-block"
@@ -313,7 +335,7 @@ function Managerpage(){
                             clipRule="evenodd"
                             ></path>
                         </svg>
-                        <span className="">Add Trainer</span>
+                        <span className="">Add Batch</span>
                         </a>
 
                         <a
@@ -372,6 +394,9 @@ function Managerpage(){
                 }
                 {toggledepartment &&
                     <Departments/>
+                }
+                {togglebatch &&
+                    <Batch/>
                 }
             
             </div>

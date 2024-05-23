@@ -43,6 +43,17 @@ class leave(models.Model):
     usertype=models.CharField(max_length=15,null=True,blank=True)
     message=models.CharField(max_length=350,null=True,blank=True)
 
+class batch(models.Model):
+    dept= models.CharField(max_length=25,null=True,blank=True)
+    trainer=models.CharField(max_length=25,null=True,blank=True)
+    trainerid=models.IntegerField(null=True,blank=True)
+    traineeid=models.CharField(max_length=25,null=True,blank=True)
+    batchname= models.CharField(max_length=25,null=True,blank=True)
+    time=models.TimeField(null=True,blank=True)
+
+
+   
+
 
 
 

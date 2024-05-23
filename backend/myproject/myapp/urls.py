@@ -31,6 +31,8 @@ urlpatterns=[
     path('adddept/',views.Adddept,name="adddept"),
     path('deptedit/<int:pk>',views.Deptedit,name='deptedit'),
 
+    path('addBatch/',views.AddBatch,name="addBatch"),
+
 
 
 
