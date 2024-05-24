@@ -376,4 +376,41 @@ def AddBatch(request):
         print("Serializer errors:", serializer.errors)
         return Response(serializer.errors)
 
-    
+@api_view(['GET'])
+def FilteredBatches(request):
+
+    userdept_entered = request.query_params.get('depts') 
+    print(userdept_entered)
+    if userdept_entered:
+        depttype=batch.objects.filter(dept=userdept_entered)
+        serializer=batchserializer(depttype,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)  
+
+@api_view(['DELETE'])
+def Batchdelete(request):
+    batchname_entered = request.query_params.get('depts')
+    if batchname_entered: 
+        batchs = batch.objects.filter(batchname=batchname_entered)
+        batchs.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)   
+  
+
+@api_view(['GET'])
+def FilteredBatches1(request):
+
+    batchname_entered = request.query_params.get('batchname') 
+    print(batchname_entered)
+    if batchname_entered:
+        filbatch=batch.objects.filter(batchname=batchname_entered)
+        serializer=batchserializer(filbatch,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)  
+
+@api_view(['GET'])
+def Getallbatches(request):
+    allbatches=batch.objects.all()
+    serializer=batchserializer(allbatches,many=True)
+    return Response(serializer.data)    

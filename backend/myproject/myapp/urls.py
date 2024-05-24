@@ -32,6 +32,11 @@ urlpatterns=[
     path('deptedit/<int:pk>',views.Deptedit,name='deptedit'),
 
     path('addBatch/',views.AddBatch,name="addBatch"),
+    path('filteredBatches/',views.FilteredBatches,name="filteredBatches"),
+    path('batchdelete/',views.Batchdelete,name="batchdelete"),
+    path('filteredBatches1/',views.FilteredBatches1,name="filteredBatches1"),
+    path('getallbatches/',views.Getallbatches,name="getallbatches")
+
 
 
 

@@ -2,11 +2,15 @@ import { useEffect, useState } from "react";
 import axios from 'axios';
 import Select from 'react-select';
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { FcDepartment } from "react-icons/fc";
+import { TiTick } from "react-icons/ti";
+import { ImCross } from "react-icons/im";
 
 
 function Batch() {
     const [selecttab, setSelecttab] = useState(false);
-    const [viewtab,setViewtab]=useState(false)
+    const [viewtab, setViewtab] = useState(false);
     const [deptss, setDeptss] = useState([]);
     const [filteredusers, setFilteredusers] = useState([]);
     const [trainer, setTrainer] = useState("");
@@ -15,6 +19,21 @@ function Batch() {
     const [department, setDepartment] = useState("");
     const [filteredusers1, setFilteredusers1] = useState([]);
     const [allregusers, setAllregusers] = useState([]);
+    const [viewdepartment, setViewdepartment] = useState("");
+    const [viewdeptss, setViewdeptss] = useState([]);
+    const [toggleselectview, setToggleselectview] = useState(false);
+    const [filteredbatch, setFilteredbatch] = useState([]);
+    const [viewfilteredusers1, setViewfilteredusers1] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [toggleeditbatch,setToggleeditbatch]=useState(false)
+    const [filteredbatch1, setFilteredbatch1] = useState([]);
+    const [filteredbatch2, setFilteredbatch2] = useState([]);
+    const [allbatchesnames,setAllbatchesnames]=useState([])
+    const [trainees1, setTrainees1] = useState([]);
+
+    const [nameExists,setNameExists]=useState(false)
+
+
 
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/myapp/users/')
@@ -27,9 +46,22 @@ function Batch() {
             });
     }, []);
 
+    useEffect(() => {
+        axios.get('http://127.0.0.1:8000/myapp/users/')
+            .then(response => {
+                setViewfilteredusers1(response.data);
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.log("error", error);
+            });
+    }, []);
+
+
     const Addbatch = () => {
         setSelecttab(true);
-        setViewtab(false)
+        setViewtab(false);
+        setToggleselectview(false);
         axios.get('http://127.0.0.1:8000/myapp/departments/')
             .then(response => {
                 setDeptss(response.data);
@@ -38,7 +70,21 @@ function Batch() {
             .catch(error => {
                 console.log("error", error);
             });
+
+
+        axios.get('http://127.0.0.1:8000/myapp/getallbatches/')
+            .then(response => {
+                console.log("all",response.data)
+                setAllbatchesnames(response.data)
+            })
+            .catch(error => {
+                console.log("error", error);
+            });    
     };
+
+    useEffect(() => {
+        setNameExists(allbatchesnames.some(batch => batch.batchname === batchname));
+    }, [batchname, allbatchesnames]);
 
     useEffect(() => {
         if (department && department !== "All") {
@@ -94,15 +140,15 @@ function Batch() {
 
     const addbatchto = (e) => {
         e.preventDefault();
-    
+
         const selectedTrainer = allregusers.find(user => user.id.toString() === trainer.toString());
-    
+
         console.log("selectedTrainer:", selectedTrainer);
-    
+
         const trainerName = selectedTrainer ? `${selectedTrainer.first_name} ${selectedTrainer.last_name}` : "";
-    
+
         console.log("trainerName:", trainerName);
-    
+
         const formData = new FormData();
         formData.append('department', department);
         formData.append('trainer', trainerName);
@@ -113,7 +159,7 @@ function Batch() {
         axios.post('http://127.0.0.1:8000/myapp/addBatch/', formData)
             .then(response => {
                 console.log(response.data);
-                setSelecttab(false)
+                setSelecttab(false);
                 toast.success("Batch Added", {
                     position: "top-right",
                     autoClose: 5000,
@@ -124,7 +170,7 @@ function Batch() {
                     progress: undefined,
                     theme: "colored",
                 });
-                
+
             })
             .catch(error => {
                 console.log("error", error);
@@ -140,25 +186,234 @@ function Batch() {
                 });
             });
     };
-    
 
     const Viewbatch = () => {
-        setViewtab(true)
+        setViewtab(true);
+        setToggleselectview(true);
         setSelecttab(false);
-        
+        setLoading(true);
+
+        axios.get('http://127.0.0.1:8000/myapp/departments/')
+            .then(response => {
+                setViewdeptss(response.data);
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.log("error", error);
+            });
     };
 
+    useEffect(() => {
+        if (viewdepartment && viewdepartment !== "select") {
+            setLoading(true);
+            const type = { depts: viewdepartment };
+
+            axios.get('http://127.0.0.1:8000/myapp/filteredBatches/', { params: type })
+                .then(response => {
+                    const mergedBatches = mergeBatches(response.data);
+                    setFilteredbatch(mergedBatches);
+                    console.log(mergedBatches);
+                    setLoading(false);
+                })
+                .catch(error => {
+                    console.log("error", error);
+                    setLoading(false);
+                });
+        }
+    }, [viewdepartment]);
+
+    const mergeBatches = (batches) => {
+        const batchMap = new Map();
+
+        batches.forEach(batch => {
+            if (batchMap.has(batch.batchname)) {
+                batchMap.get(batch.batchname).traineeid.push(batch.traineeid);
+            } else {
+                batchMap.set(batch.batchname, {
+                    ...batch,
+                    traineeid: [batch.traineeid]
+                });
+            }
+        });
+
+        return Array.from(batchMap.values());
+    };
+
+    const getTraineeNames = (traineeIds) => {
+        return traineeIds.map(id => {
+            const trainee = viewfilteredusers1.find(user => user.id.toString() === id.toString());
+            return trainee ? `${trainee.first_name} ${trainee.last_name}` : id;
+        }).join(', ');
+    };
+    
+
+    const getdeptlogo = (dept) => {
+    const department = viewdeptss.find(dep => dep.dept === dept);
+    return department ? department.dept_image : "";
+    };
+
+
+    const deletebatch=(Name)=>{
+        const type = { depts: Name };
+        
+
+        axios.delete("http://127.0.0.1:8000/myapp/batchdelete/",{ params: type })
+          .then((response) => {
+            setFilteredbatch(filteredbatch.filter((batch) => batch.batchname !== Name));
+            console.log(response.data,"Dept deleted successfully");
+            toast.success("Dept Deleted", {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          })
+          .catch((error) => {
+            console.log("error", error);
+            toast.error("Error", {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          });
+
+    }
+    const editbatch=(Name,Batchname)=>{
+        setToggleeditbatch(true)
+
+        const type1 = { batchname: Batchname };
+
+            axios.get('http://127.0.0.1:8000/myapp/filteredBatches1/', { params: type1 })
+                .then(response => {
+                    setFilteredbatch2(response.data);
+                    console.log(response.data);
+                })
+                .catch(error => {
+                    console.log("error", error);
+                });
+
+
+        const type = { usertype: "Trainee", depts: Name };
+        axios.get('http://127.0.0.1:8000/myapp/allUsersProfilefilter/', { params: type })
+            .then(response => {
+                setFilteredbatch1(response.data);
+                console.log("dept",response.data);
+            })
+            .catch(error => {
+                console.log("error", error);
+            });
+    }
+    const handleTraineeseditChange = (selectedOptions) => {
+        const duplicateTrainees = selectedOptions.filter(option =>
+            filteredbatch2.some(batch => batch.traineeid.includes(option.value))
+        );
+        setTrainees1(selectedOptions.map(option => option.value));
+
+    
+        if (duplicateTrainees.length > 0) {
+            toast.warning("trainees already in batch", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            console.log("Error: Duplicate trainees found in batch");
+           return;
+        }
+    
+    };
+    const submiteditedbatch = (e) => {
+        e.preventDefault();
+    
+        const { dept, trainer, trainerid, batchname } = filteredbatch2[0];
+    
+        const formData = new FormData();
+        formData.append('department', dept);
+        formData.append('trainer', trainer);
+        formData.append('trainerid', trainerid);
+        formData.append('batchname', batchname);
+        formData.append('traineeid', trainees1);
+    
+        console.log("FormData:", formData);
+    
+        axios.post('http://127.0.0.1:8000/myapp/addBatch/', formData)
+            .then(response => {
+                console.log(response.data);
+    
+                setFilteredbatch(filteredbatch.map(batch => {
+                    if (batch.batchname === batchname) {
+                        return {
+                            ...batch,
+                            traineeid: [...batch.traineeid, ...trainees1]
+                        };
+                    }
+                    return batch;
+                }));
+    
+                setToggleeditbatch(false);
+                toast.success("Batch Edited", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+            })
+            .catch(error => {
+                console.log("error", error);
+                toast.error("Error Editing Batch", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+            });
+    };
+    
+    
+    
+
+    
     return (
         <>
             <div className="md:h-full h-screen w-4/6 md:w-full bg-gradient-to-r from-blue-50 to-blue-100">
-                <div className="flex w-full">
-                    <div className="flex justify-start mt-2 flex-1">
+                <div className="md:flex-row flex flex-col w-full">
+                    <div className="flex justify-start mt-2 ">
                         <p className="cursor-pointer md:ml-1 hover:text-blue-500" onClick={Addbatch}>Add / </p>
                         <p className="cursor-pointer md:ml-1 hover:text-blue-500" onClick={Viewbatch}>View</p>
                     </div>
-                    <div className="mt-2 flex justify-start flex-1">
-                        <p className="font-bold font text-2xl text-purple-600">Batch</p>
-                    </div>
+                    {toggleselectview && (
+                        <div className="mb-4 flex md:ml-4 ml-1 items-center mt-1.5">
+                            <label htmlFor="title" className="text-lx font-serif">Department:</label>
+                            <select onChange={(e) => { setViewdepartment(e.target.value) }}
+                                className="ml-2 outline-none py-1 px-5 text-md border-2 rounded-md">
+                                <option>select</option>
+                                {viewdeptss.map((department, index) => (
+                                    <option key={index}>{department.dept}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
                 </div>
                 {selecttab && (
                     <form>
@@ -168,7 +423,7 @@ function Batch() {
                                 <div className="space-y-4 flex-col justify-center items-center">
                                     <div className="md:flex-row flex flex-col justify-evenly">
                                         <div className="mb-4">
-                                            <label htmlFor="title" className="text-lx font-serif">Department:</label>
+                                            <label htmlFor="title" className="text-lx font-serif">Dept:</label>
                                             <select onChange={(e) => { setDepartment(e.target.value) }}
                                                 className="ml-2 outline-none py-1 px-5 text-md border-2 rounded-md">
                                                 <option>All</option>
@@ -190,9 +445,20 @@ function Batch() {
                                                 ))}
                                             </select>
                                         </div>
-                                        <div>
-                                            <label htmlFor="email" className="text-lx font-serif">Name:</label>
-                                            <input onChange={(e) => setBatchname(e.target.value)} type="text" placeholder="name" id="email" className="ml-2 outline-none py-1 w-36 px-1 text-md border-2 rounded-md" />
+                                        <div className="">
+                                            <div className=" flex justify-center items-center ">
+                                                <label htmlFor="email" className="text-lx font-serif">Name:</label>
+                                                <input onChange={(e) => setBatchname(e.target.value)} type="text" placeholder="name" id="email" className="ml-2 outline-none py-1 w-36 px-1 text-md border-2 rounded-md" />
+                                                {nameExists ? (
+                                                    <div className="w-4 m-0">
+                                                        <ImCross className="text-red-600 " />
+                                                    </div>
+                                                ) : (
+                                                    <div className="w-4 m-0">
+                                                        <TiTick className="text-green-600 text-2xl" />
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="flex flex-col justify-evenly">
@@ -212,48 +478,83 @@ function Batch() {
                         </div>
                     </form>
                 )}
-                {viewtab &&(
-                    <div class="flex h-screen flex-col items-center justify-center space-y-6 bg-gray-100 px-4 sm:flex-row sm:space-x-6 sm:space-y-0">
-                    <div class="w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-md duration-300 hover:scale-105 hover:shadow-xl">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto mt-8 h-16 w-16 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                      </svg>
-                      <h1 class="mt-2 text-center text-2xl font-bold text-gray-500">Success</h1>
-                      <p class="my-4 text-center text-sm text-gray-500">Woah, successfully completed 3/5 Tasks</p>
-                      <div class="space-x-4 bg-gray-100 py-4 text-center">
-                        <button class="inline-block rounded-md bg-red-500 px-10 py-2 font-semibold text-red-100 shadow-md duration-75 hover:bg-red-400">Cancel</button>
-                        <button class="inline-block rounded-md bg-green-500 px-6 py-2 font-semibold text-green-100 shadow-md duration-75 hover:bg-green-400">Dashboard</button>
-                      </div>
+                {viewtab && (
+                    <div className="md:flex-row flex flex-col w-full md:justify-evenly mt-5 flex-wrap justify-center items-center">
+                        {loading ? (
+                            <p>Loading...</p>
+                        ) : (
+                            filteredbatch.map((batch, index) => (
+                                <div key={index} className="md:w-1/4 ml-2 mr-2 w-full overflow-hidden rounded-lg bg-white shadow-md duration-300 hover:scale-105 hover:shadow-xl md:p-3 mb-9">
+                                    <div className="mx-auto mt-1 h-8 w-8 text-green-400">
+                                        <img className="w-full h-full rounded-full" src={`http://127.0.0.1:8000${getdeptlogo(batch.dept)}`} alt="department image" />
+                                    </div>
+                                    <h1 className="mt-2 text-center text-xl font-bold text-gray-500">{batch.batchname}</h1>
+                                    <p className="my-2 text-center text-sm text-gray-500 ">Trainer: <span className="font-serif font-bold">{batch.trainer}</span></p>
+                                    <div className="flex flex-wrap justify-center items-center">
+                                        <p className="my-2 text-center text-sm text-gray-500"> Trainee:<span className="font-serif font-bold  flex flex-col">{getTraineeNames(batch.traineeid)}</span></p>
+                                    </div>
+                                    <div className="flex justify-center items-center">
+                                        <p className="my-1 text-center text-sm text-gray-500">Date: {batch.time}</p>
+                                        <p className="my-1 text-center text-sm text-gray-500">Time: {batch.time}</p>
+                                    </div>
+                                    <div className="space-x-4  py-4 text-center">
+                                        <button onClick={()=>deletebatch(batch.batchname)} className="inline-block rounded-md bg-red-500 px-6 py-2 font-semibold text-red-100 shadow-md duration-75 hover:bg-red-400">Delete</button>
+                                        <button onClick={()=>editbatch(batch.dept,batch.batchname)} className="inline-block rounded-md bg-green-500 px-8 py-2 font-semibold text-green-100 shadow-md duration-75 hover:bg-green-400">Add</button>
+                                    </div>
+                                </div>
+                            ))
+                        )}
                     </div>
-                    <div class="w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-md duration-300 hover:scale-105 hover:shadow-xl">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto mt-8 h-16 w-16 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                      </svg>
-                      <h1 class="mt-2 text-center text-2xl font-bold text-gray-500">Cancel</h1>
-                      <p class="my-4 text-center text-sm text-gray-500">Just a small miss, 2/5 Tasks</p>
-                      <div class="space-x-4 bg-gray-100 py-4 text-center">
-                        <button class="inline-block rounded-md bg-red-500 px-10 py-2 font-semibold text-red-100 shadow-md duration-75 hover:bg-red-400">Cancel</button>
-                        <button class="inline-block rounded-md bg-green-500 px-6 py-2 font-semibold text-green-100 shadow-md duration-75 hover:bg-green-400">Try Again</button>
-                      </div>
-                    </div>
-                  </div>
-
                 )}
+
+                {toggleeditbatch && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black bg-opacity-50">
+                        <div className="relative w-full max-w-lg p-5 mx-auto my-auto bg-white rounded-xl shadow-lg">
+                            <form onSubmit={submiteditedbatch}>
+                                <h1 className="text-center text-2xl font-bold text-gray-500 mb-10">Edit Batch</h1>
+                                <div className="space-y-4 flex-col justify-center items-center">
+                                    <div className="flex flex-col justify-evenly">
+                                        <div className="mb-3 flex items-center">
+                                            <label htmlFor="title" className="text-lx font-serif">Trainee:</label>
+                                            <Select
+                                            isMulti
+                                            onChange={handleTraineeseditChange}
+                                            options={filteredbatch1
+                                                .map(user => ({ value: user.id, label: user.first_name + " " + user.last_name }))
+                                            }
+                                            className="ml-2 outline-none py-1 px-2 md:px-4 text-md  rounded-md"
+                                        />
+                                        </div>
+                                    </div>
+                                    <div className="p-3 mt-2 text-center space-x-4 md:block">
+                                        <button className="mb-2 md:mb-0 bg-white px-5 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100" onClick={() => setToggleeditbatch(false)}>
+                                            Cancel
+                                        </button>
+                                        <button type="submit" className="mb-2 md:mb-0 bg-red-500 border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">
+                                            Save
+                                        </button>
+                                    </div> 
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
             </div>
             <div>
-            <ToastContainer
-                position="top-right"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="colored"
+                <ToastContainer
+                    position="top-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="colored"
                 />
-            </div>  
+            </div>
         </>
     );
 }

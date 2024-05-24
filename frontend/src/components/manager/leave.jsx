@@ -123,7 +123,7 @@ function Leave() {
                 {trainerApplications && (
                     <div className="md:flex-row flex flex-col w-full md:justify-evenly mt-9 flex-wrap justify-center items-center">
                         {trainerfilter.map((leave,index)=>
-                            <div key={index} className="relative bg-yellow-100 p-4 rounded-lg shadow-lg max-w-sm w-11/12 mb-6 card">
+                            <div key={index} className="relative bg-yellow-100 p-4 rounded-lg shadow-lg max-w-sm w-11/12 mb-6 card duration-300 hover:scale-105 hover:shadow-xl">
                                 <div className="flex items-center mb-4">
                                     <div className="bg-yellow-400 rounded-full h-10 w-10 flex items-center justify-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -162,7 +162,7 @@ function Leave() {
                 {traineeApplications && (
                     <div className="md:flex-row flex flex-col w-full md:justify-evenly mt-9 flex-wrap justify-center items-center">
                     {traineefilter.map((leave,index)=>
-                            <div key={index} className="relative bg-yellow-100 p-4 rounded-lg shadow-lg max-w-sm w-11/12 mb-6 card">
+                            <div key={index} className="relative bg-yellow-100 p-4 rounded-lg shadow-lg max-w-sm w-11/12 mb-6 card duration-300 hover:scale-105 hover:shadow-xl">
                                 <div className="flex items-center mb-4">
                                     <div className="bg-yellow-400 rounded-full h-10 w-10 flex items-center justify-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
