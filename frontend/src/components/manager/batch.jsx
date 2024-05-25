@@ -28,9 +28,11 @@ function Batch() {
     const [toggleeditbatch,setToggleeditbatch]=useState(false)
     const [filteredbatch1, setFilteredbatch1] = useState([]);
     const [filteredbatch2, setFilteredbatch2] = useState([]);
+    const [filteredbatch3, setFilteredbatch3] = useState([]);
     const [allbatchesnames,setAllbatchesnames]=useState([])
     const [trainees1, setTrainees1] = useState([]);
-
+    const [isTrainerAvailable, setIsTrainerAvailable] = useState(true);
+    const [isTraineeAvailable, setIsTraineeAvailable] = useState(true);
     const [nameExists,setNameExists]=useState(false)
 
 
@@ -79,8 +81,78 @@ function Batch() {
             })
             .catch(error => {
                 console.log("error", error);
-            });    
+            });
+            
+            
     };
+
+    useEffect(() => {
+        if (department && department !== "select") {
+            const type = { depts: department };
+
+            axios.get('http://127.0.0.1:8000/myapp/filteredBatches/', { params: type })
+                .then(response => {
+                    const mergedBatches = mergeBatches3(response.data);
+                    setFilteredbatch3(mergedBatches);
+                    console.log("newmerged",mergedBatches);
+                })
+                .catch(error => {
+                    console.log("error", error);
+                });
+        }
+    }, [department]);
+
+    const mergeBatches3 = (batches) => {
+        const batchMap = new Map();
+
+        batches.forEach(batch => {
+            if (batchMap.has(batch.batchname)) {
+                batchMap.get(batch.batchname).traineeid.push(batch.traineeid);
+            } else {
+                batchMap.set(batch.batchname, {
+                    ...batch,
+                    traineeid: [batch.traineeid]
+                });
+            }
+        });
+
+        return Array.from(batchMap.values());
+    };
+
+    
+useEffect(() => {
+    if (trainer && trainer !== "Select User") {
+        console.log("Selected trainer:", trainer);
+        console.log("Filtered batches:", filteredbatch3);
+
+        const trainerIdAsNumber = Number(trainer);
+
+        const isTrainerInMergedBatch = filteredbatch3.some(batch => {
+            const matches = batch.trainerid === trainerIdAsNumber && filteredbatch3.length === 3;
+            return matches;
+        });
+
+        console.log("isTrainerInMergedBatch:", isTrainerInMergedBatch);
+
+        setIsTrainerAvailable(!isTrainerInMergedBatch);
+
+        if (isTrainerInMergedBatch) {
+            toast.error("Trainer is not available", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+            return;
+        }
+    }
+}, [trainer, filteredbatch3]);
+
+
 
     useEffect(() => {
         setNameExists(allbatchesnames.some(batch => batch.batchname === batchname));
@@ -191,7 +263,6 @@ function Batch() {
         setViewtab(true);
         setToggleselectview(true);
         setSelecttab(false);
-        setLoading(true);
 
         axios.get('http://127.0.0.1:8000/myapp/departments/')
             .then(response => {
@@ -205,7 +276,6 @@ function Batch() {
 
     useEffect(() => {
         if (viewdepartment && viewdepartment !== "select") {
-            setLoading(true);
             const type = { depts: viewdepartment };
 
             axios.get('http://127.0.0.1:8000/myapp/filteredBatches/', { params: type })
@@ -213,11 +283,9 @@ function Batch() {
                     const mergedBatches = mergeBatches(response.data);
                     setFilteredbatch(mergedBatches);
                     console.log(mergedBatches);
-                    setLoading(false);
                 })
                 .catch(error => {
                     console.log("error", error);
-                    setLoading(false);
                 });
         }
     }, [viewdepartment]);
@@ -317,6 +385,9 @@ function Batch() {
             filteredbatch2.some(batch => batch.traineeid.includes(option.value))
         );
         setTrainees1(selectedOptions.map(option => option.value));
+
+        setIsTraineeAvailable(duplicateTrainees.length === 0);   
+
 
     
         if (duplicateTrainees.length > 0) {
@@ -472,7 +543,12 @@ function Batch() {
                                             />
                                         </div>
                                     </div>
-                                    <button onClick={addbatchto} type="submit" className="px-6 py-2 mx-auto block rounded-md text-lg font-semibold text-indigo-100 bg-indigo-600">ADD</button>
+                                    {isTrainerAvailable &&
+                                        <button onClick={addbatchto} type="submit" className="px-6 py-2 mx-auto block rounded-md text-lg font-semibold text-indigo-100 bg-indigo-600">ADD</button>
+                                    }
+                                    {!isTrainerAvailable &&
+                                        <button onClick={addbatchto} type="submit" disabled className="px-6 py-2 mx-auto block rounded-md text-lg font-semibold text-indigo-100  bg-gray-300">ADD</button>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -530,9 +606,16 @@ function Batch() {
                                         <button className="mb-2 md:mb-0 bg-white px-5 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100" onClick={() => setToggleeditbatch(false)}>
                                             Cancel
                                         </button>
+                                        {isTraineeAvailable &&
                                         <button type="submit" className="mb-2 md:mb-0 bg-red-500 border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">
                                             Save
                                         </button>
+                                        }
+                                        {!isTraineeAvailable &&
+                                        <button type="submit" disabled className="mb-2 md:mb-0  bg-gray-300  border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg">
+                                            Save
+                                        </button>
+                                        }
                                     </div> 
                                 </div>
                             </form>
