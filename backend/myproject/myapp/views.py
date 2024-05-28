@@ -6,6 +6,8 @@ from .models import attendence
 from .models import traineeattendence
 from .models import leave
 from .models import batch
+from .models import notification
+from .models import traineeattendence
 from .serializers import userserializer
 from .serializers import degreeimgserializer
 from .serializers import deptserializer
@@ -13,8 +15,12 @@ from .serializers import attendenceserializer
 from .serializers import traineeattendenceserializer
 from .serializers import leaveserializer
 from .serializers import batchserializer
+from .serializers import notificationserializer
+from .serializers import traineeattendenceserializer
 from django.core.mail import send_mail
 import random
+from django.utils import timezone
+from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -33,7 +39,6 @@ from django.shortcuts import get_list_or_404
 @api_view(['POST'])
 def Register(request):
     serializer=userserializer(data=request.data)
-    print(request.data)
     if serializer.is_valid():
         email=serializer.validated_data.get('email')
         phone=serializer.validated_data.get('phone')
@@ -46,7 +51,7 @@ def Register(request):
         password=serializer.validated_data.get('password')
         username = serializer.validated_data.get('username')
         sendemail(email, password)
-        userdata=user.objects.create_user(email=email,phone=phone,user_image=image,dept=dept,gender=gender,first_name=first,last_name=second,usertype=usertype1,username=username, password=password)
+        userdata=user.objects.create_user(email=email,phone=phone,user_image=image,dept=dept,gender=gender,first_name=first,last_name=second,usertype=usertype1,username=username, password=password,is_active=False)
         images = request.FILES.getlist('image')
         for image in images:
             product_images=degreecertificates.objects.create(degreeimage=image,userid=userdata)
@@ -95,6 +100,7 @@ def Loginview(request):
     password=request.data['password']
 
     user=authenticate(username=username,password=password)
+        
 
     if user:
         refresh=RefreshToken.for_user(user)
@@ -414,3 +420,103 @@ def Getallbatches(request):
     allbatches=batch.objects.all()
     serializer=batchserializer(allbatches,many=True)
     return Response(serializer.data)    
+
+
+
+@api_view(['POST'])
+def Notificationpost(request):
+    serializer = notificationserializer(data=request.data)
+    print(request.data)
+    if serializer.is_valid():
+        id1 = request.data.get('id')
+        name1=request.data.get('name')
+        dept1 = request.data.get('dept')
+        type1 = request.data.get('type')
+        message1 = request.data.get('message')
+        usertype1 = request.data.get('usertype')
+        notificationdata = notification.objects.create(userid=id1,username=name1,dept=dept1,type=type1,message=message1,usertype=usertype1) 
+        response_serializer = notificationserializer(notificationdata)
+
+        return Response(response_serializer.data)
+    else:
+        print("Serializer errors:", serializer.errors)
+        return Response(serializer.errors)
+
+@api_view(['GET'])
+def Getallnotifications(request):
+    allnotifi=notification.objects.all()
+    serializer=notificationserializer(allnotifi,many=True)
+    return Response(serializer.data)    
+
+
+@api_view(['PUT'])
+def Activateuser(request):
+    user_id = request.data.get('userid') 
+    print(user_id)
+    try:
+        activateuser = user.objects.get(id=user_id)
+        activateuser.is_active = 1
+        activateuser.save()
+        return Response({'message': 'user actiated'}, status=status.HTTP_200_OK)
+    except user.DoesNotExist:
+        return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+def Userdeletetable(request,pk):
+    users=get_object_or_404(user,id=pk)
+    users.delete()
+    userss=get_object_or_404(notification,userid=pk)
+    userss.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)     
+
+@api_view(['DELETE'])
+def Notificationdeletetable(request,pk):
+
+    notifi=get_object_or_404(notification,id=pk)
+    notifi.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)  
+
+@api_view(['DELETE'])
+def Notificationdeletetableall(request):
+        notification.objects.all().delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)  
+
+@api_view(['PUT'])
+def Readednotification(request):
+    notifi_id = request.data.get('notificationid') 
+    print(notifi_id)
+    try:
+        readednotific = notification.objects.get(id=notifi_id)
+        readednotific.isread = 1
+        readednotific.save()
+        return Response({'message': 'Notification Readed'}, status=status.HTTP_200_OK)
+    except notification.DoesNotExist:
+        return Response({'error': 'Notification does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+def Filterednotification(request):
+        filnotifi=notification.objects.filter(isread=0)
+        serializer=notificationserializer(filnotifi,many=True)
+        return Response(serializer.data)    
+
+@api_view(['GET'])
+def Allleaveget(request):
+    depts=leave.objects.all()
+    serializer=leaveserializer(depts,many=True)
+    return Response(serializer.data)  
+
+
+@api_view(['GET'])
+def Filterednotactiateuser(request):
+        current_date = timezone.now().date()
+        filusr=user.objects.filter(is_active = 0,date_joined__date=current_date)
+        serializer=userserializer(filusr,many=True)
+        return Response(serializer.data)  
+
+
+@api_view(['GET'])
+def TrainerBatchfilter(request,pk):
+    batch1=batch.objects.filter(trainerid=pk)
+    serializer=batchserializer(batch1,many=True)
+    return Response(serializer.data)
+    

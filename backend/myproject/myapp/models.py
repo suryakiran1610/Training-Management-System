@@ -51,6 +51,25 @@ class batch(models.Model):
     batchname= models.CharField(max_length=25,null=True,blank=True)
     time=models.TimeField(null=True,blank=True)
 
+class notification(models.Model):
+    managerid=models.IntegerField(null=True,blank=True)
+    managername=models.CharField(max_length=250,null=True,blank=True)
+    message=models.CharField(max_length=250,null=True,blank=True)
+    userid=models.IntegerField(null=True,blank=True)
+    username=models.CharField(max_length=250,null=True,blank=True)
+    batchname=models.CharField(max_length=250,null=True,blank=True)
+    dept=models.CharField(max_length=250,null=True,blank=True)
+    type=models.CharField(max_length=250,null=True,blank=True)
+    isread=models.BooleanField(default=False)
+    usertype=models.CharField(max_length=250,null=True,blank=True)
+
+
+
+
+
+
+   
+
 
    
 

@@ -372,7 +372,7 @@ function Attendence() {
                     <div className="flex flex-col md:flex-row justify-center h-2/4 w-full md:mt-1">
                         <div className="container mx-auto px-4 sm:px-8 md:mt-1">
                             <div className="py-8 md:mt-1">
-                                <div className="my-2 flex sm:flex-row flex-col md:mt-1 mt-9 ">
+                                <div className="my-2 flex sm:flex-row flex-col md:mt-1 mt-16 ">
                                     <div className="flex">
                                         <div className="relative">
                                             <select onChange={(e) => { setDept(e.target.value) }}

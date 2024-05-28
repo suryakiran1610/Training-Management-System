@@ -35,6 +35,8 @@ function Register() {
     const [phoneExists,setPhoneExists]=useState(false);
     const [usernameExists,setUsernameExists]=useState(false);
 
+    const [responsedata,setResponsedata]=useState([])
+
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/myapp/users/')
         .then(response => {
@@ -90,60 +92,77 @@ function Register() {
         return Math.floor(100000 + Math.random() * 900000);
     };
 
-    const handlesubmit=(e)=>{
+    const handlesubmit = (e) => {
         e.preventDefault();
         setCountdowntoggle(true);
-
-        const formData=new FormData();
-        formData.append('email',email);
-        formData.append('phone',phone);
-        formData.append('first',first);
-        formData.append('second',second);
-        formData.append('user',user);
-        formData.append('dept',dept);
-        formData.append('gender',gender);
-        formData.append('username',username);
+    
+        const formData = new FormData();
+        formData.append('email', email);
+        formData.append('phone', phone);
+        formData.append('first', first);
+        formData.append('second', second);
+        formData.append('user', user);
+        formData.append('dept', dept);
+        formData.append('gender', gender);
+        formData.append('username', username);
         formData.append('password', generateRandomPassword());
-        formData.append('profileimg',profileimg);
+        formData.append('profileimg', profileimg);
         degreeimg.forEach(file => {
             formData.append('image', file);
         });
-
+    
         let initialCountdown = 10;
-
+    
         timerId.current = setInterval(() => {
             initialCountdown--;
-
             setCountdown(initialCountdown);
-
+    
             if (initialCountdown === 0) {
                 clearInterval(timerId.current);
             }
-        }, 1000); 
-
+        }, 1000);
+    
         axios.post('http://127.0.0.1:8000/myapp/register/', formData)
-        .then(response => {
-            console.log(response.data);
-            toast.success('Registration Successfull', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-            });
+            .then(response => {
+                console.log(response.data);
+                setResponsedata(response.data);
+    
+                const notificationFormData = new FormData();
+                notificationFormData.append('id', response.data.id);
+                notificationFormData.append('name', response.data.first_name + " " + response.data.last_name);
+                notificationFormData.append('dept', response.data.dept);
+                notificationFormData.append('usertype', response.data.usertype);
+                notificationFormData.append('type', "userregistration");
+                notificationFormData.append('message', `New ${response.data.usertype} Registration`);
 
-            const timer = setTimeout(() => {
-                navigate('/login');
-            }, 4000);
-        
-        })
-        .catch(error => {
-            console.log(error);
-        });
+    
+                axios.post('http://127.0.0.1:8000/myapp/notificationpost/', notificationFormData)
+                    .then(notificationResponse => {
+                        console.log(notificationResponse.data);
+                        toast.success('Registration Successful', {
+                            position: "top-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+    
+                        const timer = setTimeout(() => {
+                            navigate('/login');
+                        }, 4000);
+                    })
+                    .catch(notificationError => {
+                        console.log(notificationError);
+                    });
+            })
+            .catch(error => {
+                console.log(error);
+            });
     };
+    
 
     return (
         <div className="flex  p-2 h-screen flex-col bg-gradient-to-b from-sky-400 to-sky-200">

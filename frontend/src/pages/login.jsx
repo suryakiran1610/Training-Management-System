@@ -38,6 +38,7 @@ function Login(){
                             });
                     }
                     else{
+                        console.log(response.data)
                         const token = response.data.token;
                         const decoded = jwtDecode(token);
                         if(decoded.user){

@@ -9,6 +9,7 @@ import Attendence from "../components/manager/attendence";
 import Leave from "../components/manager/leave";
 import Departments from "../components/manager/departments";
 import Batch from "../components/manager/batch";
+import Notifications from "../components/manager/notifications";
 import { useNavigate } from "react-router-dom";
 
 
@@ -24,6 +25,8 @@ function Managerpage(){
     const [toggleleave,seTtoggleleave]=useState(false)
     const [toggledepartment,setToggledepartment]=useState(false)
     const [togglebatch,setTogglebatch]=useState(false)
+    const [togglenotification,setTogglenotification]=useState(false)
+    const [notifications,setNotifications]=useState([])
 
     const navigatee=useNavigate()
 
@@ -43,6 +46,8 @@ function Managerpage(){
         seTtoggleleave(false)
         setToggledepartment(false)
         setTogglebatch(false)
+        setTogglenotification(false)
+
 
 
 
@@ -56,6 +61,8 @@ function Managerpage(){
         seTtoggleleave(false)
         setToggledepartment(false)
         setTogglebatch(false)
+        setTogglenotification(false)
+
 
 
 
@@ -70,6 +77,8 @@ function Managerpage(){
         seTtoggleleave(false)
         setToggledepartment(false)
         setTogglebatch(false)
+        setTogglenotification(false)
+
 
 
 
@@ -83,6 +92,8 @@ function Managerpage(){
         seTtoggleleave(false)
         setToggledepartment(false)
         setTogglebatch(false)
+        setTogglenotification(false)
+
 
 
 
@@ -95,6 +106,8 @@ function Managerpage(){
         setToggleprofile(false)
         setToggledepartment(false)
         setTogglebatch(false)
+        setTogglenotification(false)
+
 
 
     }
@@ -106,6 +119,8 @@ function Managerpage(){
         setToggleDashboard(false)
         setToggleprofile(false)
         setTogglebatch(false)
+        setTogglenotification(false)
+
     }
 
     const Batches=()=>{
@@ -116,6 +131,18 @@ function Managerpage(){
         setToggleallusers(false)
         setToggleDashboard(false)
         setToggleprofile(false)
+        setTogglenotification(false)
+    }
+    const Notification=()=>{
+        setTogglenotification(true)
+        setToggleprofile(false)
+        setToggleDashboard(false)
+        setShowDropdown(false)
+        setToggleallusers(false)
+        setToggleAttendence(false)
+        seTtoggleleave(false)
+        setToggledepartment(false)
+        setTogglebatch(false)
 
     }
 
@@ -132,6 +159,34 @@ function Managerpage(){
         axios.get('http://127.0.0.1:8000/myapp/profiledetails/'+decoded.user_id)
         .then(response => {
             setUserprofile(response.data);
+            console.log(response.data)
+        })
+        .catch(error => {
+            console.log("error", error);
+        });
+    }, []);
+
+
+    useEffect(() => {
+        updateNotification();
+    }, [togglenotification, toggledashboard]);
+
+    const updateNotification=()=>{
+        axios.get('http://127.0.0.1:8000/myapp/filterednotification/')
+        .then(response => {
+            setNotifications(response.data);
+            console.log(response.data)
+        })
+        .catch(error => {
+            console.log("error", error);
+        });
+
+    }
+
+    useEffect(() => {
+        axios.get('http://127.0.0.1:8000/myapp/filterednotification/')
+        .then(response => {
+            setNotifications(response.data);
             console.log(response.data)
         })
         .catch(error => {
@@ -335,44 +390,30 @@ function Managerpage(){
                         </svg>
                         <span className="">Add Batch</span>
                         </a>
+                        
+                        <a
+                            onClick={Notification}
+                            className="relative text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out cursor-pointer"
+                            >
+                            <div className="absolute left-0 top-0 bg-red-500 rounded-full">
+                                <span className="text-sm text-white p-1">{notifications.length}</span>
+                            </div>
+                            <svg
+                                className="w-6 h-6 fill-current inline-block"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"
+                                ></path>
+                                <path
+                                d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"
+                                ></path>
+                            </svg>
+                            <span>Notifications</span>
+                        </a>
 
-                        <a
-                        href=""
-                        className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out"
-                        >
-                       <svg
-                            className="w-6 h-6 fill-current inline-block"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                            fillRule="evenodd"
-                            d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                            clipRule="evenodd"
-                            ></path>
-                        </svg>
-                        <span className="">Add Trainee</span>
-                        </a>
-                        <a
-                        href=""
-                        className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out"
-                        >
-                        <svg
-                            className="w-6 h-6 fill-current inline-block"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                            d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"
-                            ></path>
-                            <path
-                            d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"
-                            ></path>
-                        </svg>
-                        <span className="">Notifications</span>
-                        </a>
                     </div>
                     </div>
                 </div>
@@ -397,6 +438,9 @@ function Managerpage(){
                 }
                 {togglebatch &&
                     <Batch/>
+                }
+                {togglenotification &&
+                    <Notifications updateNotification={updateNotification}/>
                 }
             
             </div>

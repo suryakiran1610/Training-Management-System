@@ -35,7 +35,25 @@ urlpatterns=[
     path('filteredBatches/',views.FilteredBatches,name="filteredBatches"),
     path('batchdelete/',views.Batchdelete,name="batchdelete"),
     path('filteredBatches1/',views.FilteredBatches1,name="filteredBatches1"),
-    path('getallbatches/',views.Getallbatches,name="getallbatches")
+    path('getallbatches/',views.Getallbatches,name="getallbatches"),
+
+
+    path('notificationpost/',views.Notificationpost,name="notificationpost"),
+    path('getallnotifications/',views.Getallnotifications,name="getallnotifications"),
+    path('activateuser/',views.Activateuser,name='activateuser'),
+    path('userdeletetable/<int:pk>',views.Userdeletetable,name="userdeletetable"),
+    path('notificationdeletetable/<int:pk>',views.Notificationdeletetable,name="notificationdeletetable"),
+    path('notificationdeletetableall/',views.Notificationdeletetableall,name="notificationdeletetableall"),
+    path('readednotification/',views.Readednotification,name="readednotification"),
+
+    path('filterednotification/',views.Filterednotification,name="filterednotification"),
+    path('allleaveget/',views.Allleaveget,name="allleaveget"),
+    path('filterednotactiateuser/',views.Filterednotactiateuser,name="filterednotactiateuser"),
+
+
+    path('trainerBatchfilter/<int:pk>',views.TrainerBatchfilter,name='trainerBatchfilter'),
+
+
 
 
 
