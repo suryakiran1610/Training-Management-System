@@ -520,3 +520,25 @@ def TrainerBatchfilter(request,pk):
     serializer=batchserializer(batch1,many=True)
     return Response(serializer.data)
     
+@api_view(['GET'])
+def Traineeattendence1(request):
+    traineeattendence1=traineeattendence.objects.all()
+    serializer=traineeattendenceserializer(traineeattendence1,many=True)
+    return Response(serializer.data)   
+
+@api_view(['POST'])
+def TraineePostAttendence1(request):
+    serializer=traineeattendenceserializer(data=request.data)
+    print(request.data)
+    if serializer.is_valid():
+        name =serializer.validated_data.get('username')
+        id=serializer.validated_data.get('userid')
+        dept=request.data.get('department')
+        date=serializer.validated_data.get('date')
+        status=serializer.validated_data.get('status')
+        attends=traineeattendence.objects.create(username=name,userid=id,depatment=dept,date=date,status=status)
+        response_serializer =traineeattendenceserializer(attends)
+        return Response(response_serializer.data)
+    else:
+        print("Serializer errors:", serializer.errors)
+        return Response(serializer.errors)

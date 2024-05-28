@@ -53,7 +53,8 @@ urlpatterns=[
 
     path('trainerBatchfilter/<int:pk>',views.TrainerBatchfilter,name='trainerBatchfilter'),
 
-
+    path('traineeattendence1/',views.Traineeattendence1,name="traineeattendence1"),
+    path('traineePostAttendence1/',views.TraineePostAttendence1,name="traineePostAttendence1"),
 
 
 
