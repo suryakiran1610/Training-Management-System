@@ -55,6 +55,13 @@ urlpatterns=[
 
     path('traineeattendence1/',views.Traineeattendence1,name="traineeattendence1"),
     path('traineePostAttendence1/',views.TraineePostAttendence1,name="traineePostAttendence1"),
+    path('filterraineeattendence/',views.Filterraineeattendence,name="filterraineeattendence"),
+
+    path('leavefilterss/',views.Leavefilterss,name="leavefilterss"),
+
+    path('filteredBatchesuserid/',views.FilteredBatchesuserid,name="filteredBatchesuserid"),
+
+
 
 
 

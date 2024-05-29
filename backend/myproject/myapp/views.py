@@ -98,7 +98,6 @@ def Departments(request):
 def Loginview(request):
     username=request.data['username']
     password=request.data['password']
-
     user=authenticate(username=username,password=password)
         
 
@@ -111,7 +110,8 @@ def Loginview(request):
         if user.usertype=='Trainee':     
             refresh.payload["user"]=user.usertype
 
-        refresh.payload["userfullname"] = user.first_name + " " + user.last_name 
+        refresh.payload["userfullname"] = user.first_name + " " + user.last_name
+        refresh.payload["department"] = user.dept
       
         return Response({"token":str(refresh.access_token)})
     else:
@@ -542,3 +542,28 @@ def TraineePostAttendence1(request):
     else:
         print("Serializer errors:", serializer.errors)
         return Response(serializer.errors)
+    
+@api_view(['GET'])
+def Leavefilterss(request):
+
+    userid_entered = request.query_params.get('userid') 
+    print(userid_entered)
+    if userid_entered:
+        usertype=leave.objects.filter(userid=userid_entered)
+        serializer=leaveserializer(usertype,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)  
+    
+@api_view(['GET'])
+def FilteredBatchesuserid(request):
+
+    userid_entered = request.query_params.get('userid') 
+    print(userid_entered)
+    if userid_entered:
+        batches=batch.objects.filter(trainerid=userid_entered)
+        serializer=batchserializer(batches,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)      
+  

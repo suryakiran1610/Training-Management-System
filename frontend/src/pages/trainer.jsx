@@ -5,12 +5,17 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import Dashboard1 from "../components/trainer/dashboard1";
 import Attendance1 from "../components/trainer/attendence1";
+import Leave1 from "../components/trainer/leave1";
+import Batch1 from "../components/trainer/batch1";
 
 function Trainerpage(){
     const [showDropdown, setShowDropdown] = useState(false);
     const [sidenav, setSidenav] = useState(true);
     const[toggledashboard,setToggleDashboard]=useState(true)
     const [toggleattendence,setToggleAttendence]=useState(false)
+    const [toggleleave,setToggleLeave]=useState(false)
+    const [togglebatch,setTogglebatch]=useState(false)
+
     const[userprofile,setUserprofile]=useState([])
 
     const navigatee=useNavigate()
@@ -25,12 +30,30 @@ function Trainerpage(){
     const dashboard=()=>{
         setToggleDashboard(true)
         setToggleAttendence(false)
+        setToggleLeave(false)
+        setTogglebatch(false)
 
     }  
     const Attendence=()=>{
         setToggleAttendence(true)
         setToggleDashboard(false)
+        setToggleLeave(false)
+        setTogglebatch(false)
 
+
+    }
+
+    const Leave=()=>{
+        setToggleLeave(true)
+        setToggleAttendence(false)
+        setToggleDashboard(false)
+        setTogglebatch(false)
+    }
+    const batch=()=>{
+        setTogglebatch(true)
+        setToggleLeave(false)
+        setToggleAttendence(false)
+        setToggleDashboard(false)
     }
     
     const toggleDropdown = () => {
@@ -195,6 +218,8 @@ function Trainerpage(){
                         </a>
                         <a
                         className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out cursor-pointer"
+                        onClick={Leave}
+
                         >
                         <svg
                             className="w-6 h-6 fill-current inline-block"
@@ -213,6 +238,7 @@ function Trainerpage(){
                         </a>
                         <a
                         className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out cursor-pointer"
+                        onClick={batch}
                         >
                         <svg
                             className="w-6 h-6 fill-current inline-block"
@@ -259,6 +285,12 @@ function Trainerpage(){
                 }
                 {toggleattendence &&
                     <Attendance1/>
+                }
+                {toggleleave &&
+                    <Leave1/>
+                }
+                {togglebatch &&
+                    <Batch1/>
                 }
             </div>
             

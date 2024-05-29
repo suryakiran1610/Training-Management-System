@@ -564,6 +564,7 @@ function Attendence() {
                         </div>   
                     </div>
                 )}
+                
                 {viewtraineeattendence && (
                     <div className="mt-6">
                         <div className="md:w-3/5 w-3/4 flex justify-end">

@@ -15,15 +15,33 @@ function Attendance1(){
     const [traineeattendence, setTraineeattendence] = useState(false);
     const [traineeprofile, setTraineeprofile] = useState([]);
     const [batch,setBatch]=useState([])
+    const [batch1,setBatch1]=useState([])
     const [viewbtn,setViewbtn]=useState(true)
     const [attendenceon,setAttendenceon]=useState(false)
     const [titleon,seTtitleon]=useState(true)
     const [showattends,setShowattends]=useState(false)
+    const [selecttab,setSelecttab]=useState(false)
     const [currentDate, setCurrentDate] = useState("");
     const [batchh, setBatchh] = useState("");
     const [filteredbatchname,setFilteredbatchname]=useState([])
     const [filteredTrainees, setFilteredTrainees] = useState([]);
+    const [filteredTrainees1, setFilteredTrainees1] = useState([]);
     const [getAttendance, setGetAttendance] = useState([]);
+    const [traineename,setTraineename]=useState("")
+    const [batchh1,setBatchh1]=useState("")
+    const [viewtraineeattendence,setViewtraineeattendence]=useState(false)
+    const [viewtrainerattendence,setViewtrainerattendence]=useState(false)
+    const [filterattendence,setFilterattendence]=useState([])
+    const [allFilteredusers,setAllFilteredusers]=useState([])
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [filterattendence1,setFilterattendence1]=useState([])
+    const [allFilteredusers1,setAllFilteredusers1]=useState([])
+
+
+
+    
+
+
 
 
 
@@ -47,15 +65,22 @@ function Attendance1(){
         setCurrentDate(formattedDate);
     }, []);
 
+    useEffect(() => {
+                const allTraineeIds = batch.reduce((acc, b) => {
+                    return acc.concat(b.traineeid.map(id => Number(id)));
+                }, []);
+                const filtered = traineeprofile.filter(tp => allTraineeIds.includes(tp.id));
+                console.log(filtered);
+                setFilteredTrainees(filtered);
+    },[batchh, batch, traineeprofile])
+
 
     useEffect(() => {
         if (batchh) {
             if (batchh === "All") {
-                // Get all trainee IDs from all batches
                 const allTraineeIds = batch.reduce((acc, b) => {
                     return acc.concat(b.traineeid.map(id => Number(id)));
                 }, []);
-                // Filter trainee profiles based on these IDs
                 const filtered = traineeprofile.filter(tp => allTraineeIds.includes(tp.id));
                 console.log(filtered);
                 setFilteredTrainees(filtered);
@@ -72,7 +97,9 @@ function Attendance1(){
             }
         }
     }
-}, [batchh, batch, traineeprofile]);
+    }, [batchh, batch, traineeprofile]);
+
+
 
 
 
@@ -82,6 +109,9 @@ function Attendance1(){
         setTraineeattendence(true);
         setShowattends(false)
         setAttendenceon(true)
+        setSelecttab(false)
+        setViewtraineeattendence(false)
+        setViewtrainerattendence(false)
 
 
         const type = { usertype: "Trainee" };
@@ -94,7 +124,23 @@ function Attendance1(){
             .catch(error => {
                 console.log("error", error);
             });
+ 
+    }
+    useEffect(()=>{
+        const type = { usertype: "Trainee" };
 
+        axios.get('http://127.0.0.1:8000/myapp/allusersprofile/', { params: type })
+            .then(response => {
+                setTraineeprofile(response.data);
+                console.log("trainees",response.data);
+            })
+            .catch(error => {
+                console.log("error", error);
+            });
+
+    },[])
+
+    useEffect(() => {
         const token=Cookies.get('token')
         const decoded=jwtDecode(token)
 
@@ -106,8 +152,10 @@ function Attendance1(){
             })
             .catch(error => {
                 console.log("error", error);
-            });       
-    }
+            });      
+    },[])
+
+
     const mergeBatches = (batches) => {
         const batchMap = new Map();
 
@@ -145,19 +193,101 @@ function Attendance1(){
                 console.log("error", error);
             });
     }
+
+
     const trainerattendenceshow=()=>{
-        setSelecttab(true)
+        setSelecttab(false)
         setViewbtn(false)
-        setSelecttab1(false)
+        setViewtrainerattendence(true)
+        setViewtraineeattendence(false)
+
+
+        const token=Cookies.get('token')
+        const decoded=jwtDecode(token)
+
+        const type = { userattendence: decoded.user_id };
+
+        axios.get('http://127.0.0.1:8000/myapp/filterrainerattendence/', { params: type })
+        .then(response => {
+            console.log("attendebcetrainer",response.data);
+            setFilterattendence1(response.data)
+            setViewtrainerattendence(true)
+        })
+        .catch(error => {
+            console.log("error", error);
+        });
+        
+        const type1 = { usertype: "Trainer" };
+            axios.get('http://127.0.0.1:8000/myapp/allusersprofile/', { params: type1 })
+                .then(response => {
+                    setAllFilteredusers1(response.data);
+                    console.log("allne",response.data);
+                })
+                .catch(error => {
+                    console.log("error", error);
+                });   
+
+        
     }
     
     const traineeattendenceshow=()=>{
         setViewbtn(false)
-        setSelecttab(false)
-        setSelecttab1(true)
-    }    
+        setSelecttab(true)
+        setViewtrainerattendence(false)
+        setViewtraineeattendence(false)
 
 
+        const type = { usertype: "Trainee" };
+            axios.get('http://127.0.0.1:8000/myapp/allusersprofile/', { params: type })
+                .then(response => {
+                    setAllFilteredusers(response.data);
+                    console.log("allne",response.data);
+                })
+                .catch(error => {
+                    console.log("error", error);
+                });   
+    } 
+
+    const toggleattdsuser=()=>{
+
+        const type = { userattendence: traineename };
+
+        axios.get('http://127.0.0.1:8000/myapp/filterraineeattendence/', { params: type })
+        .then(response => {
+            console.log("attendebce",response.data);
+            setFilterattendence(response.data)
+            setViewtraineeattendence(true)
+        })
+        .catch(error => {
+            console.log("error", error);
+        });
+
+    }
+    const getDateClass = (date) => {
+        const formattedDate = date.toLocaleDateString('en-CA');
+        const attendanceRecords = filterattendence.filter(att => att.date === formattedDate);
+
+        if (attendanceRecords.length > 0) {
+            const isPresent = attendanceRecords.some(att => att.status === 'present');
+            return isPresent ? 'present' : 'absent';
+        }
+
+        return '';
+    };
+
+    const getDateClass1 = (date) => {
+        const formattedDate = date.toLocaleDateString('en-CA');
+        const attendanceRecords = filterattendence1.filter(att => att.date === formattedDate);
+
+        if (attendanceRecords.length > 0) {
+            const isPresent = attendanceRecords.some(att => att.status === 'present');
+            return isPresent ? 'present' : 'absent';
+        }
+
+        return '';
+    };
+    
+    
 
 
     return(
@@ -175,6 +305,7 @@ function Attendance1(){
                                     setAttendenceon(false)
                                     seTtitleon(false)
                                     setTraineeattendence(false);
+                                    setSelecttab(false)
                                 }}
                             >
                                 View
@@ -300,7 +431,106 @@ function Attendance1(){
                             </div>
                         </div>
                     </div>
-                )}  
+                )}
+                {selecttab && (
+                    <div className="flex flex-col md:flex-row justify-evenly mt-8 w-11/12 md:w-3/5">
+                        <div className="mb-2 flex justify-between items-center relative z-10">
+                            <label className="font-medium mr-2">Batch</label>
+                            <select onChange={(e) => { setBatchh(e.target.value) }}
+                                className="w-full text-sm md:text-base mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-yellow-400 focus:border-yellow-400">
+                                <option>All</option>
+                                {batch.map((bat, index) => (
+                                    <option key={index}>{bat.batchname}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="mb-2 flex justify-center items-center relative z-10">
+                            <label className="text-sm font-medium mr-2">Name</label>
+                            <select
+                                onChange={(e) => setTraineename(e.target.value)}
+                                className="w-full text-sm md:text-base mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-yellow-400 focus:border-yellow-400"
+                            >
+                                <option >Trainee</option>
+                                {filteredTrainees.map((profile, index) => (
+                                    <option key={index} value={profile.id}>{profile.first_name + " " + profile.last_name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="mb-2 flex justify-center items-center relative z-10 ">
+                        <button type="button" onClick={toggleattdsuser} className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm w-14 h-7 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">GO</button>
+                        </div>   
+                    </div>
+                )} 
+
+                {viewtraineeattendence && (
+                    <div className="mt-6">
+                        <div className="md:w-3/5 w-3/4 flex justify-end">
+                        <div className="w-full md:w-2/4 md:h-16 flex justify-start md:mb-3 mb-9 rounded-l-full rounded-r-full" style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.7)' }}>
+                            {allFilteredusers.map((user) => {
+                                if (filterattendence.some((attendance) => attendance.userid === user.id)) {
+                                    const attendanceRecord = filterattendence.find((attendance) => attendance.userid === user.id);
+                                        return (
+                                            <div key={user.id} className="flex justify-center items-center">
+                                                <div  className="relative block h-16 w-16 rounded-full overflow-hidden shadow focus:outline-none">
+                                                    <img src={`http://127.0.0.1:8000${user.user_image}`} alt="User Profile" className="h-full w-full object-cover cursor-pointer"/>
+                                                </div>
+                                                <div className="ml-3 md:ml-9 md:text-xl font-serif">
+                                                    <p>{user.first_name + " " + user.last_name} - {user.dept}</p>
+                                                </div>
+                                            </div>
+                                        );
+                                }
+                                return null;
+                            })}
+                        </div>
+                        </div>
+                        <div className="flex flex-col md:flex-row justify-center h-2/4 w-full md:mt-9 overflow-hidden">
+                            <div className="datepicker-container bg-white border border-gray-200 rounded-md shadow-lg font-sans w-full md:w-3/5 flex flex-col md:flex-row">
+                                <DatePicker
+                                    selected={selectedDate}
+                                    inline
+                                    calendarClassName="custom-calendar"
+                                    dayClassName={date => getDateClass(date)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )} 
+
+                {viewtrainerattendence && (
+                    <div className="mt-6">
+                        <div className="md:w-3/5 w-3/4 flex justify-end">
+                        <div className="w-full md:w-2/4 md:h-16 flex justify-start md:mb-3 mb-9 rounded-l-full rounded-r-full" style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.7)' }}>
+                            {allFilteredusers1.map((user) => {
+                                if (filterattendence1.some((attendance) => attendance.userid === user.id)) {
+                                    const attendanceRecord = filterattendence1.find((attendance) => attendance.userid === user.id);
+                                        return (
+                                            <div key={user.id} className="flex  justify-center items-center">
+                                                <div  className="relative block h-16 w-16 rounded-full overflow-hidden shadow focus:outline-none">
+                                                    <img src={`http://127.0.0.1:8000${user.user_image}`} alt="User Profile" className="h-full w-full object-cover cursor-pointer"/>
+                                                </div>
+                                                <div className="ml-3 md:ml-3 md:text-xl font-serif">
+                                                    <p>{user.first_name + " " + user.last_name}  - {user.dept}</p>
+                                                </div>
+                                            </div>
+                                        );
+                                }
+                                return null;
+                            })}
+                        </div>
+                        </div>
+                        <div className="flex flex-col md:flex-row justify-center h-2/4 w-full md:mt-9 overflow-hidden">
+                            <div className="datepicker-container bg-white border border-gray-200 rounded-md shadow-lg font-sans w-full md:w-3/5 flex flex-col md:flex-row">
+                                <DatePicker
+                                    selected={selectedDate}
+                                    inline
+                                    calendarClassName="custom-calendar"
+                                    dayClassName={date => getDateClass1(date)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
                     
             </div>    
         </>
