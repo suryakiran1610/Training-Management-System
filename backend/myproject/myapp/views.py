@@ -8,6 +8,8 @@ from .models import leave
 from .models import batch
 from .models import notification
 from .models import traineeattendence
+from .models import project
+from .models import projectsubmit
 from .serializers import userserializer
 from .serializers import degreeimgserializer
 from .serializers import deptserializer
@@ -17,6 +19,8 @@ from .serializers import leaveserializer
 from .serializers import batchserializer
 from .serializers import notificationserializer
 from .serializers import traineeattendenceserializer
+from .serializers import projectserializer
+from .serializers import projectsubmitserializer
 from django.core.mail import send_mail
 import random
 from django.utils import timezone
@@ -310,13 +314,14 @@ def Leavefilter(request):
 @api_view(['PUT'])
 def Changeleavestatus(request):
     status_entered = request.data.get('status') 
-    user_id = request.data.get('userid') 
+    user_id = request.data.get('userid')
+    leave_id=request.data.get('leaveid') 
     print(status_entered,user_id)
     try:
-        leave_record = leave.objects.get(userid=user_id)
+        leave_record = leave.objects.get(userid=user_id,id=leave_id)
         leave_record.status = status_entered
         leave_record.save()
-        return Response({'message': 'status updated successfully'}, status=status.HTTP_200_OK)
+        return Response({'message':status_entered}, status=status.HTTP_200_OK)
     except leave.DoesNotExist:
         return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -434,7 +439,8 @@ def Notificationpost(request):
         type1 = request.data.get('type')
         message1 = request.data.get('message')
         usertype1 = request.data.get('usertype')
-        notificationdata = notification.objects.create(userid=id1,username=name1,dept=dept1,type=type1,message=message1,usertype=usertype1) 
+        trainerid1 =request.data.get('trainerid')
+        notificationdata = notification.objects.create(trainerid=trainerid1,userid=id1,username=name1,dept=dept1,type=type1,message=message1,usertype=usertype1) 
         response_serializer = notificationserializer(notificationdata)
 
         return Response(response_serializer.data)
@@ -444,7 +450,7 @@ def Notificationpost(request):
 
 @api_view(['GET'])
 def Getallnotifications(request):
-    allnotifi=notification.objects.all()
+    allnotifi=notification.objects.filter(type__in=["leavesubmit", "userregistration"])
     serializer=notificationserializer(allnotifi,many=True)
     return Response(serializer.data)    
 
@@ -495,7 +501,7 @@ def Readednotification(request):
     
 @api_view(['GET'])
 def Filterednotification(request):
-        filnotifi=notification.objects.filter(isread=0)
+        filnotifi=notification.objects.filter(type__in=["leavesubmit", "userregistration"],isread=0)
         serializer=notificationserializer(filnotifi,many=True)
         return Response(serializer.data)    
 
@@ -567,3 +573,207 @@ def FilteredBatchesuserid(request):
     else:
         return Response({"error": "User type not provided"}, status=400)      
   
+
+@api_view(['PUT'])
+def Addschedule(request):
+    user_time = request.data.get('time')
+    user_date = request.data.get('date') 
+    user_batch = request.data.get('batchname') 
+ 
+    print(user_time,user_date,user_batch)
+    try:
+        batches = batch.objects.filter(batchname=user_batch)
+        
+        if not batches.exists():
+            return Response({'error': 'Batch does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        for batch1 in batches:
+            batch1.time = user_time
+            batch1.date = user_date
+            batch1.save()
+
+        return Response({'message': 'time and date updated'}, status=status.HTTP_200_OK)
+    
+    except batch.DoesNotExist:
+        return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)  
+
+
+
+@api_view(['GET'])
+def Filterednotificationuserid(request):
+
+    userid_entered = request.query_params.get('userid') 
+    print(userid_entered)
+    if userid_entered:
+        noti=notification.objects.filter(trainerid=userid_entered)
+        serializer=notificationserializer(noti,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)  
+    
+@api_view(['GET'])
+def Filterednotificationuserid1(request):
+
+    userid_entered = request.query_params.get('userid') 
+    print(userid_entered)
+    if userid_entered:
+        noti=notification.objects.filter(trainerid=userid_entered,isread=0)
+        serializer=notificationserializer(noti,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)     
+    
+@api_view(['POST'])
+def Notificationpost1(request):
+    serializer = notificationserializer(data=request.data)
+    print(request.data)
+    if serializer.is_valid():
+        name1=request.data.get('name')
+        dept1 = request.data.get('dept')
+        type1 = request.data.get('type')
+        message1 = request.data.get('message')
+        usertype1 = request.data.get('usertype')
+        trainerid1=request.data.get('trainerid')
+        id1 = request.data.get('id').split(',')
+        for ids in id1: 
+            notificationdata = notification.objects.create(trainerid=trainerid1,username=name1,dept=dept1,type=type1,message=message1,usertype=usertype1,userid=ids.strip()) 
+        response_serializer = notificationserializer(notificationdata)
+
+        return Response(response_serializer.data)
+    else:
+        print("Serializer errors:", serializer.errors)
+        return Response(serializer.errors)    
+    
+@api_view(['POST'])
+def Addproject(request):
+    serializer = projectserializer(data=request.data)
+    print(request.data)
+    if serializer.is_valid():
+        projectname1 = request.data.get('projectname')
+        batchname1 = request.data.get('batchname')
+        trainerid1 = request.data.get('trainerid')
+        trainername1 = request.data.get('trainername')
+        department1 = request.data.get('department')
+        start1 = request.data.get('start')
+        end1 = request.data.get('end')
+        status1 = request.data.get('status')
+        id1 = request.data.getlist('traineeid')
+        name1 = request.data.getlist('traineename')
+
+        project_entries = []
+        for i in range(len(id1)):
+            projectdata = project.objects.create(
+                projectname=projectname1,
+                batchname=batchname1,
+                trainerid=trainerid1,
+                trainername=trainername1,
+                department=department1,
+                start=start1,
+                end=end1,
+                status=status1,
+                traineeid=id1[i].strip(),
+                traineename=name1[i],
+            )
+            project_entries.append(projectdata)
+
+        response_serializer = projectserializer(project_entries, many=True)
+        return Response(response_serializer.data)
+    else:
+        print("Serializer errors:", serializer.errors)
+        return Response(serializer.errors)
+      
+
+@api_view(['POST'])
+def Notificationpost2(request):
+    serializer = notificationserializer(data=request.data)
+    print(request.data)
+    if serializer.is_valid():
+        dept1 = request.data.get('dept')
+        type1 = request.data.get('type')
+        message1 = request.data.get('message')
+        id1 = request.data.getlist('traineeid')
+        for ids in id1: 
+            notificationdata = notification.objects.create(dept=dept1,type=type1,message=message1,userid=ids.strip()) 
+        response_serializer = notificationserializer(notificationdata)
+
+        return Response(response_serializer.data)
+    else:
+        print("Serializer errors:", serializer.errors)
+        return Response(serializer.errors)    
+
+@api_view(['GET'])
+def Filteredproject(request):
+
+    trainerid_entered = request.query_params.get('trainerid') 
+    print(trainerid_entered)
+    if trainerid_entered:
+        project1=project.objects.filter(trainerid=trainerid_entered)
+        serializer=projectserializer(project1,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)      
+
+@api_view(['DELETE'])
+def Projectdelete(request):
+    projectid_entered = request.query_params.get('projectid')
+    print(projectid_entered)
+    if projectid_entered: 
+        projects = project.objects.filter(id=projectid_entered)
+        projects.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)        
+
+@api_view(['GET'])
+def Filtertraineeattendence1(request):
+
+    user_entered = request.query_params.get('userattendence')
+    if user_entered:
+        users=traineeattendence.objects.filter(userid=user_entered)
+        serializer=traineeattendenceserializer(users,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)  
+    
+
+@api_view(['POST'])
+def Notificationpost3(request):
+    serializer = notificationserializer(data=request.data)
+    print(request.data)
+    if serializer.is_valid():
+        id1 = request.data.get('id')
+        name1=request.data.get('name')
+        dept1 = request.data.get('dept')
+        type1 = request.data.get('type')
+        message1 = request.data.get('message')
+        usertype1 = request.data.get('usertype')
+        traineeid1 =request.data.get('traineeid')
+        notificationdata = notification.objects.create(userid=traineeid1,username=name1,dept=dept1,type=type1,message=message1,usertype=usertype1) 
+        response_serializer = notificationserializer(notificationdata)
+
+        return Response(response_serializer.data)
+    else:
+        print("Serializer errors:", serializer.errors)
+        return Response(serializer.errors)    
+
+@api_view(['GET'])
+def Filterednotificationuserid4(request):
+
+    userid_entered = request.query_params.get('userid') 
+    print(userid_entered)
+    if userid_entered:
+        noti=notification.objects.filter(userid=userid_entered)
+        serializer=notificationserializer(noti,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)  
+    
+@api_view(['GET'])
+def Filterednotificationuserid5(request):
+
+    userid_entered = request.query_params.get('userid') 
+    print(userid_entered)
+    if userid_entered:
+        noti=notification.objects.filter(userid=userid_entered,isread=0)
+        serializer=notificationserializer(noti,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)      

@@ -338,7 +338,7 @@ function Attendance1(){
                                     <div className="flex">
                                         <div className="relative">
                                             <select onChange={(e) => { setBatchh(e.target.value) }}
-                                                className="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r border-b border-l border-r block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
+                                                className=" h-full rounded-r border-t sm:rounded-r-none sm:border-r border-b border-l border-r block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
                                                 <option>All</option>
                                                 {batch.map((bat, index) => (
                                                     <option key={index}>{bat.batchname}</option>
@@ -434,21 +434,21 @@ function Attendance1(){
                 )}
                 {selecttab && (
                     <div className="flex flex-col md:flex-row justify-evenly mt-8 w-11/12 md:w-3/5">
-                        <div className="mb-2 flex justify-between items-center relative z-10">
+                        <div className="mb-2 flex md:justify-between justify-start items-center relative z-10">
                             <label className="font-medium mr-2">Batch</label>
                             <select onChange={(e) => { setBatchh(e.target.value) }}
-                                className="w-full text-sm md:text-base mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-yellow-400 focus:border-yellow-400">
+                                className="md:w-full w-2/5 text-sm md:text-base mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-yellow-400 focus:border-yellow-400">
                                 <option>All</option>
                                 {batch.map((bat, index) => (
                                     <option key={index}>{bat.batchname}</option>
                                 ))}
                             </select>
                         </div>
-                        <div className="mb-2 flex justify-center items-center relative z-10">
+                        <div className="mb-2 flex md:justify-center justify-start items-center relative z-10">
                             <label className="text-sm font-medium mr-2">Name</label>
                             <select
                                 onChange={(e) => setTraineename(e.target.value)}
-                                className="w-full text-sm md:text-base mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-yellow-400 focus:border-yellow-400"
+                                className="md:w-full w-2/5 text-sm md:text-base mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-yellow-400 focus:border-yellow-400"
                             >
                                 <option >Trainee</option>
                                 {filteredTrainees.map((profile, index) => (

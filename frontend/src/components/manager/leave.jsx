@@ -41,15 +41,50 @@ function Leave() {
             });    
     };
 
-    const updatestatus=(id,status)=>{
+    const updatestatus=(id,leaveid,status)=>{
 
         const formData=new FormData();
         formData.append('userid',id);
+        formData.append('leaveid',leaveid);
         formData.append('status',status);
+
+
 
         axios.put('http://127.0.0.1:8000/myapp/changeleavestatus/',formData)
             .then(response => {
                 console.log(response.data);
+
+                if(response.data.message=="Rejected"){
+                    const notificationFormData = new FormData();
+                    notificationFormData.append('trainerid',id);
+                    notificationFormData.append('type', "leave");
+                    notificationFormData.append('message', "Leave Rejected");
+
+    
+                axios.post('http://127.0.0.1:8000/myapp/notificationpost/', notificationFormData)
+                    .then(notificationResponse => {
+                        console.log(notificationResponse.data);
+                    })
+                    .catch(error=>{
+                        console.log("notification error")
+                    })    
+                }
+                if(response.data.message=="Approved"){
+                    const notificationFormData = new FormData();
+                    notificationFormData.append('trainerid',id);
+                    notificationFormData.append('type', "leave");
+                    notificationFormData.append('message', "Leave Approved");
+
+    
+                axios.post('http://127.0.0.1:8000/myapp/notificationpost/', notificationFormData)
+                    .then(notificationResponse => {
+                        console.log(notificationResponse.data);
+                    })
+                    .catch(error=>{
+                        console.log("notification error")
+                    }) 
+                }       
+
                 setTrainerfilter(prevState => 
                     prevState.map(leave => 
                         leave.userid === id ? { ...leave, status: status } : leave
@@ -74,15 +109,48 @@ function Leave() {
         }
     };
 
-    const updatestatus1=(id,status)=>{
+    const updatestatus1=(id,leaveid,status)=>{
 
         const formData=new FormData();
         formData.append('userid',id);
+        formData.append('leaveid',leaveid);
         formData.append('status',status);
 
         axios.put('http://127.0.0.1:8000/myapp/changeleavestatus/',formData)
             .then(response => {
                 console.log(response.data);
+
+                if(response.data.message=="Rejected"){
+                    const notificationFormData = new FormData();
+                    notificationFormData.append('traineeid',id);
+                    notificationFormData.append('type', "leave");
+                    notificationFormData.append('message', "Leave Rejected");
+
+    
+                axios.post('http://127.0.0.1:8000/myapp/notificationpost3/', notificationFormData)
+                    .then(notificationResponse => {
+                        console.log(notificationResponse.data);
+                    })
+                    .catch(error=>{
+                        console.log("notification error")
+                    })    
+                }
+                if(response.data.message=="Approved"){
+                    const notificationFormData = new FormData();
+                    notificationFormData.append('traineeid',id);
+                    notificationFormData.append('type', "leave");
+                    notificationFormData.append('message', "Leave Approved");
+
+    
+                axios.post('http://127.0.0.1:8000/myapp/notificationpost3/', notificationFormData)
+                    .then(notificationResponse => {
+                        console.log(notificationResponse.data);
+                    })
+                    .catch(error=>{
+                        console.log("notification error")
+                    }) 
+                }       
+
                 setTraineefilter(prevState => 
                     prevState.map(leave => 
                         leave.userid === id ? { ...leave, status: status } : leave
@@ -151,8 +219,8 @@ function Leave() {
                                 </div>
                                 {leave.status === "Pending" && (
                                     <div className="absolute inset-0 flex justify-center items-center card-buttons space-x-4">
-                                        <button onClick={()=>updatestatus(leave.userid,"Approved")} className="bg-purple-500 text-white py-1 px-4 rounded-full">Approve</button>
-                                        <button onClick={()=>updatestatus(leave.userid,"Rejected")} className="bg-red-500 text-white py-1 px-4 rounded-full">Reject</button>
+                                        <button onClick={()=>updatestatus(leave.userid,leave.id,"Approved")} className="bg-purple-500 text-white py-1 px-4 rounded-full">Approve</button>
+                                        <button onClick={()=>updatestatus(leave.userid,leave.id,"Rejected")} className="bg-red-500 text-white py-1 px-4 rounded-full">Reject</button>
                                     </div>
                                 )}
                             </div>
@@ -190,8 +258,8 @@ function Leave() {
                                 </div>
                                 {leave.status === "Pending" && (
                                     <div className="absolute inset-0 flex justify-center items-center card-buttons space-x-4">
-                                        <button onClick={()=>updatestatus1(leave.userid,"Approved")} className="bg-purple-500 text-white py-1 px-4 rounded-full">Approve</button>
-                                        <button onClick={()=>updatestatus1(leave.userid,"Rejected")} className="bg-red-500 text-white py-1 px-4 rounded-full">Reject</button>
+                                        <button onClick={()=>updatestatus1(leave.userid,leave.id,"Approved")} className="bg-purple-500 text-white py-1 px-4 rounded-full">Approve</button>
+                                        <button onClick={()=>updatestatus1(leave.userid,leave.id,"Rejected")} className="bg-red-500 text-white py-1 px-4 rounded-full">Reject</button>
                                     </div>
                                 )}
                             </div>

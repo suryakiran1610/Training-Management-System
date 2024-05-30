@@ -50,10 +50,10 @@ class batch(models.Model):
     traineeid=models.CharField(max_length=25,null=True,blank=True)
     batchname= models.CharField(max_length=25,null=True,blank=True)
     time=models.TimeField(null=True,blank=True)
+    date=models.CharField(max_length=55,null=True,blank=True)
 
 class notification(models.Model):
-    managerid=models.IntegerField(null=True,blank=True)
-    managername=models.CharField(max_length=250,null=True,blank=True)
+    trainerid=models.IntegerField(null=True,blank=True)
     message=models.CharField(max_length=250,null=True,blank=True)
     userid=models.IntegerField(null=True,blank=True)
     username=models.CharField(max_length=250,null=True,blank=True)
@@ -64,8 +64,30 @@ class notification(models.Model):
     usertype=models.CharField(max_length=250,null=True,blank=True)
 
 
+class project(models.Model):
+    projectname=models.CharField(max_length=250,null=True,blank=True)
+    batchname=models.CharField(max_length=250,null=True,blank=True)
+    traineeid=models.IntegerField(null=True,blank=True)
+    traineename=models.CharField(max_length=250,null=True,blank=True)
+    traineeimage=models.ImageField(upload_to='trainee_image/',null=True,blank=True)
+    trainerid=models.IntegerField(null=True,blank=True)
+    trainername=models.CharField(max_length=250,null=True,blank=True)
+    department=models.CharField(max_length=250,null=True,blank=True)
+    start=models.DateField()
+    end=models.DateField()
+    status=models.CharField(max_length=250,null=True,blank=True)
+    image=models.ImageField(upload_to='project_image/',null=True,blank=True)
 
 
+class projectsubmit(models.Model):
+    projectname=models.CharField(max_length=250,null=True,blank=True)
+    projectid=models.IntegerField(null=True,blank=True)
+    batchname=models.CharField(max_length=250,null=True,blank=True)
+    traineeid=models.IntegerField(null=True,blank=True)
+    start=models.DateField()
+    end=models.DateField()
+    status=models.CharField(max_length=250,null=True,blank=True)
+    image=models.ImageField(upload_to='project_images/',null=True,blank=True)
 
 
    

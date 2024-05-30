@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 
 
-function Leave1(){
+function Leave2(){
     const [reason,setReason]=useState("")
     const [from,setFrom]=useState("")
     const [to,setTo]=useState("")
@@ -64,12 +64,12 @@ function Leave1(){
                 const notificationFormData = new FormData();
                 notificationFormData.append('name',decoded.userfullname);
                 notificationFormData.append('dept',decoded.department);
-                notificationFormData.append('trainerid',decoded.user_id);
+                notificationFormData.append('traineeid',decoded.user_id);
                 notificationFormData.append('type', "leavesubmit");
                 notificationFormData.append('message', "Leave Appication ");
 
     
-                axios.post('http://127.0.0.1:8000/myapp/notificationpost/', notificationFormData)
+                axios.post('http://127.0.0.1:8000/myapp/notificationpost3/', notificationFormData)
                     .then(notificationResponse => {
                         console.log(notificationResponse.data);
                     })
@@ -243,4 +243,4 @@ function Leave1(){
     )
 }
 
-export default Leave1
+export default Leave2

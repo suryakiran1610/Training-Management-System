@@ -1,16 +1,21 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
-import { FcLeave } from "react-icons/fc";
-import { MdGroups2 } from "react-icons/md";
-import { MdAccessTimeFilled } from "react-icons/md";
-import { LiaBusinessTimeSolid } from "react-icons/lia";
+import { jwtDecode } from "jwt-decode";
+import Cookies from 'js-cookie';
+import { HiCalendar } from "react-icons/hi";
+import { FaAllergies } from "react-icons/fa";
 
-function Notifications(props){
+function Notifications1(props){
     const [allnotifications,setAllnotifications]=useState([])
     const [allusers,setAllusers]=useState([])
 
     useEffect(() => {
-            axios.get('http://127.0.0.1:8000/myapp/getallnotifications/')
+
+        const token=Cookies.get('token')
+        const decoded=jwtDecode(token)
+        const type = { userid: decoded.user_id };
+
+            axios.get('http://127.0.0.1:8000/myapp/filterednotificationuserid/',{ params: type })
                 .then(response => {
                     setAllnotifications(response.data);
                     console.log(response.data);
@@ -99,7 +104,6 @@ function Notifications(props){
                 });
 
     }
-   
 
 
     return(
@@ -113,7 +117,7 @@ function Notifications(props){
                     </div>
                     {allnotifications.map((notification,index)=>(
                         <div>
-                            {notification.type === 'userregistration' ? (
+                            {notification.type === 'newbatch' ? (
                                 <div onClick={()=>{readed(notification.id)}} key={index}  className={`w-full p-3 mt-4 rounded shadow hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-shrink-0 ${notification.isread ? 'bg-white' : 'bg-blue-200'}`}>
                                     <div tabIndex="0" aria-label="group icon" role="img" className="focus:outline-none w-8 h-8 border rounded-full border-gray-200 flex flex-shrink-0 items-center justify-center">
                                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -121,7 +125,7 @@ function Notifications(props){
                                                     d="M1.33325 14.6667C1.33325 13.2522 1.89516 11.8956 2.89535 10.8954C3.89554 9.89523 5.2521 9.33333 6.66659 9.33333C8.08107 9.33333 9.43763 9.89523 10.4378 10.8954C11.438 11.8956 11.9999 13.2522 11.9999 14.6667H1.33325ZM6.66659 8.66666C4.45659 8.66666 2.66659 6.87666 2.66659 4.66666C2.66659 2.45666 4.45659 0.666664 6.66659 0.666664C8.87659 0.666664 10.6666 2.45666 10.6666 4.66666C10.6666 6.87666 8.87659 8.66666 6.66659 8.66666ZM11.5753 10.1553C12.595 10.4174 13.5061 10.9946 14.1788 11.8046C14.8515 12.6145 15.2515 13.6161 15.3219 14.6667H13.3333C13.3333 12.9267 12.6666 11.3427 11.5753 10.1553ZM10.2266 8.638C10.7852 8.13831 11.232 7.52622 11.5376 6.84183C11.8432 6.15743 12.0008 5.41619 11.9999 4.66666C12.0013 3.75564 11.7683 2.85958 11.3233 2.06466C12.0783 2.21639 12.7576 2.62491 13.2456 3.2208C13.7335 3.81668 14.0001 4.56315 13.9999 5.33333C14.0001 5.80831 13.8987 6.27784 13.7027 6.71045C13.5066 7.14306 13.2203 7.52876 12.863 7.84169C12.5056 8.15463 12.0856 8.38757 11.6309 8.52491C11.1762 8.66224 10.6974 8.7008 10.2266 8.638Z"
                                                     fill="#047857"
                                                 />
-                                            </svg>     
+                                            </svg>
                                     </div>
                                     <div className="pl-3 w-auto md:w-2/5 flex-col">
                                         <div className="flex items-center justify-between">
@@ -129,44 +133,19 @@ function Notifications(props){
                                         </div>  
                                         <p tabIndex="0" className="focus:outline-none text-xs leading-3 pt-1 text-gray-500"><span className="text-indigo-700"> {notification.dept}</span> Department</p>
                                     </div> 
-
-                                    {allusers.find(user => user.id===notification.userid && user.is_active===false ) ?(
-                                        <div  className="flex cursor-pointer">
-                                                    <div className="flex flex-col items-center mr-4 ">
-                                                        <div  className="flex items-center justify-center w-7 h-7 border-2 hover:border-4 border-green-500 rounded-full">
-                                                            <svg onClick={()=>{activestatus(notification.userid)}} className="w-7 h-7 text-green-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                <path  strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="flex flex-col items-center">
-                                                        <div className="flex items-center justify-center w-7 h-7 border-2 hover:border-4 border-red-500 rounded-full">
-                                                            <svg onClick={()=>{deleteuser(notification.userid)}} className="w-7 h-7 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                                <path  strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                        </div>
-                                    ):
-                                        <div className="flex text-sm text-green-600">Activated</div>
-                                    }
-
                                     <div className="focus:outline-none cursor-pointer flex w-3/5 justify-end">
                                             <svg onClick={()=>{deletenotification(notification.id)}} width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M10.5 3.5L3.5 10.5" stroke="#4B5563" strokeWidth="1.25"  strokeLinejoin="round" />
                                                 <path d="M3.5 3.5L10.5 10.5" stroke="#4B5563" strokeWidth="1.25"  strokeLinejoin="round" />
                                             </svg>
                                     </div>
-                                    
                                 </div>
-                        ) : notification.type === 'leave' ?(
-                            <div onClick={()=>{readed(notification.id)}} key={index}  className={`w-full p-3 mt-4 rounded shadow hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-shrink-0 ${notification.isread ? 'bg-white' : 'bg-blue-200'}`}>
+                            ):notification.type === 'leave' ? (
+                                <div onClick={()=>{readed(notification.id)}} key={index}  className={`w-full p-3 mt-4 rounded shadow hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-shrink-0 ${notification.isread ? 'bg-white' : 'bg-blue-200'}`}>
                                     <div tabIndex="0" aria-label="group icon" role="img" className="focus:outline-none w-8 h-8 border rounded-full border-gray-200 flex flex-shrink-0 items-center justify-center">
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <FcLeave />
-
-                                    </svg>
+                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <HiCalendar className="text-orange-500" />
+                                            </svg>
                                     </div>
                                     <div className="pl-3 w-auto md:w-2/5 flex-col">
                                         <div className="flex items-center justify-between">
@@ -174,88 +153,35 @@ function Notifications(props){
                                         </div>  
                                         <p tabIndex="0" className="focus:outline-none text-xs leading-3 pt-1 text-gray-500"><span className="text-indigo-700"> {notification.dept}</span> Department</p>
                                     </div> 
-
-
                                     <div className="focus:outline-none cursor-pointer flex w-3/5 justify-end">
                                             <svg onClick={()=>{deletenotification(notification.id)}} width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M10.5 3.5L3.5 10.5" stroke="#4B5563" strokeWidth="1.25"  strokeLinejoin="round" />
                                                 <path d="M3.5 3.5L10.5 10.5" stroke="#4B5563" strokeWidth="1.25"  strokeLinejoin="round" />
                                             </svg>
                                     </div>
-                                    
-                            </div>
-
-                        ):notification.type === 'newbatch' ?(
-                            <div onClick={()=>{readed(notification.id)}} key={index}  className={`w-full p-3 mt-4 rounded shadow hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-shrink-0 ${notification.isread ? 'bg-white' : 'bg-blue-200'}`}>
-                                    <div tabIndex="0" aria-label="group icon" role="img" className="focus:outline-none w-8 h-8 border rounded-full border-gray-200 flex flex-shrink-0 items-center justify-center">
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <MdGroups2 className="text-blue-500"/>
-                                    </svg>
-                                    </div>
-                                    <div className="pl-3 w-auto md:w-2/5 flex-col">
-                                        <div className="flex items-center justify-between">
-                                            <p tabIndex="0" className="focus:outline-none text-sm leading-none"><span className="text-indigo-700">{notification.username}</span> {notification.message}</p>
-                                        </div>  
-                                        <p tabIndex="0" className="focus:outline-none text-xs leading-3 pt-1 text-gray-500"><span className="text-indigo-700"> {notification.dept}</span> Department</p>
-                                    </div> 
-
-
-                                    <div className="focus:outline-none cursor-pointer flex w-3/5 justify-end">
-                                            <svg onClick={()=>{deletenotification(notification.id)}} width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M10.5 3.5L3.5 10.5" stroke="#4B5563" strokeWidth="1.25"  strokeLinejoin="round" />
-                                                <path d="M3.5 3.5L10.5 10.5" stroke="#4B5563" strokeWidth="1.25"  strokeLinejoin="round" />
-                                            </svg>
-                                    </div>
-                                    
                                 </div>
-
-                        ):notification.type === 'scheduleupdate' ?(
-                            <div onClick={()=>{readed(notification.id)}} key={index}  className={`w-full p-3 mt-4 rounded shadow hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-shrink-0 ${notification.isread ? 'bg-white' : 'bg-blue-200'}`}>
+                            ):notification.type === 'leavesubmit' ? (
+                                <div onClick={()=>{readed(notification.id)}} key={index}  className={`w-full p-3 mt-4 rounded shadow hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-shrink-0 ${notification.isread ? 'bg-white' : 'bg-blue-200'}`}>
                                     <div tabIndex="0" aria-label="group icon" role="img" className="focus:outline-none w-8 h-8 border rounded-full border-gray-200 flex flex-shrink-0 items-center justify-center">
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <MdAccessTimeFilled className="text-yellow-500"/>
-                                    </svg>
+                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <FaAllergies className="text-pink-600" />
+                                            </svg>
                                     </div>
                                     <div className="pl-3 w-auto md:w-2/5 flex-col">
                                         <div className="flex items-center justify-between">
-                                            <p tabIndex="0" className="focus:outline-none text-sm leading-none"><span className="text-indigo-700">{notification.username}</span> {notification.message}</p>
+                                            <p tabIndex="0" className="focus:outline-none text-sm leading-none"><span className="text-indigo-700">{notification.username}</span> {notification.message} Submitted</p>
                                         </div>  
                                         <p tabIndex="0" className="focus:outline-none text-xs leading-3 pt-1 text-gray-500"><span className="text-indigo-700"> {notification.dept}</span> Department</p>
                                     </div> 
-
-
                                     <div className="focus:outline-none cursor-pointer flex w-3/5 justify-end">
                                             <svg onClick={()=>{deletenotification(notification.id)}} width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M10.5 3.5L3.5 10.5" stroke="#4B5563" strokeWidth="1.25"  strokeLinejoin="round" />
                                                 <path d="M3.5 3.5L10.5 10.5" stroke="#4B5563" strokeWidth="1.25"  strokeLinejoin="round" />
                                             </svg>
                                     </div>
-                                    
-                            </div>
-                        ):notification.type === 'leavesubmit' ?(
-                            <div onClick={()=>{readed(notification.id)}} key={index}  className={`w-full p-3 mt-4 rounded shadow hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-shrink-0 ${notification.isread ? 'bg-white' : 'bg-blue-200'}`}>
-                                    <div tabIndex="0" aria-label="group icon" role="img" className="focus:outline-none w-8 h-8 border rounded-full border-gray-200 flex flex-shrink-0 items-center justify-center">
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <LiaBusinessTimeSolid className="text-violet-600"/>
-                                    </svg>
-                                    </div>
-                                    <div className="pl-3 w-auto md:w-2/5 flex-col">
-                                        <div className="flex items-center justify-between">
-                                            <p tabIndex="0" className="focus:outline-none text-sm leading-none"><span className="text-indigo-700">{notification.username}</span> {notification.message}</p>
-                                        </div>  
-                                        <p tabIndex="0" className="focus:outline-none text-xs leading-3 pt-1 text-gray-500"><span className="text-indigo-700"> {notification.dept}</span> Department</p>
-                                    </div> 
-
-
-                                    <div className="focus:outline-none cursor-pointer flex w-3/5 justify-end">
-                                            <svg onClick={()=>{deletenotification(notification.id)}} width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M10.5 3.5L3.5 10.5" stroke="#4B5563" strokeWidth="1.25"  strokeLinejoin="round" />
-                                                <path d="M3.5 3.5L10.5 10.5" stroke="#4B5563" strokeWidth="1.25"  strokeLinejoin="round" />
-                                            </svg>
-                                    </div>
-                                    
-                            </div>
-                        ):null}
+                                </div>
+                            
+                             ): null}    
                         </div>
                     ))}    
                 </div>
@@ -265,4 +191,4 @@ function Notifications(props){
     )
 }
 
-export default Notifications
+export default Notifications1

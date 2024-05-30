@@ -60,6 +60,28 @@ urlpatterns=[
     path('leavefilterss/',views.Leavefilterss,name="leavefilterss"),
 
     path('filteredBatchesuserid/',views.FilteredBatchesuserid,name="filteredBatchesuserid"),
+    path('addschedule/',views.Addschedule,name="addschedule"),
+
+    path('filterednotificationuserid/',views.Filterednotificationuserid,name="filterednotificationuserid"),
+    path('filterednotificationuserid1/',views.Filterednotificationuserid1,name="filterednotificationuserid1"),
+
+
+    path('notificationpost1/',views.Notificationpost1,name="notificationpost1"),
+    path('notificationpost2/',views.Notificationpost2,name="notificationpost2"),
+
+
+    path('addproject/',views.Addproject,name="addproject"),
+    path('filteredproject/',views.Filteredproject,name="filteredproject"),
+    path('projectdelete/',views.Projectdelete,name="projectdelete"),
+
+    path('filtertraineeattendence1/',views.Filtertraineeattendence1,name="filtertraineeattendence1"),
+    path('notificationpost3/',views.Notificationpost3,name="notificationpost3"),
+
+    path('filterednotificationuserid4/',views.Filterednotificationuserid4,name="filterednotificationuserid4"),
+    path('filterednotificationuserid5/',views.Filterednotificationuserid5,name="filterednotificationuserid5"),
+
+
+
 
 
 

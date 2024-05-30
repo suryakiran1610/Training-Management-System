@@ -242,6 +242,21 @@ useEffect(() => {
                     progress: undefined,
                     theme: "colored",
                 });
+                    const notificationFormData = new FormData();
+                    notificationFormData.append('id',trainees);
+                    notificationFormData.append('dept',department);
+                    notificationFormData.append('trainerid',trainer);
+                    notificationFormData.append('type', "newbatch");
+                    notificationFormData.append('message', "New Batch Assigned");
+
+        
+                    axios.post('http://127.0.0.1:8000/myapp/notificationpost1/', notificationFormData)
+                        .then(notificationResponse => {
+                            console.log(notificationResponse.data);
+                        })
+                        .catch(error=>{
+                            console.log("notification error")
+                        })    
 
             })
             .catch(error => {
@@ -460,6 +475,14 @@ useEffect(() => {
                 });
             });
     };
+
+    const formatTime = (timeString) => {
+        if (timeString) {
+            const [hours, minutes] = timeString.split(':');
+            return `${hours}:${minutes}`;
+        }
+        return timeString;
+    };
     
     
     
@@ -569,9 +592,9 @@ useEffect(() => {
                                     <div className="flex flex-wrap justify-center items-center">
                                         <p className="my-2 text-center text-sm text-gray-500"> Trainee:<span className="font-serif font-bold  flex flex-col">{getTraineeNames(batch.traineeid)}</span></p>
                                     </div>
-                                    <div className="flex justify-center items-center">
-                                        <p className="my-1 text-center text-sm text-gray-500">Date: {batch.time}</p>
-                                        <p className="my-1 text-center text-sm text-gray-500">Time: {batch.time}</p>
+                                    <div className="flex justify-evenly items-center">
+                                        <p className="my-1 text-center text-sm text-gray-500">Date: {batch.date}</p>
+                                        <p className="my-1 text-center text-sm text-gray-500">Time: {formatTime(batch.time)}</p>
                                     </div>
                                     <div className="space-x-4  py-4 text-center">
                                         <button onClick={()=>deletebatch(batch.batchname)} className="inline-block rounded-md bg-red-500 px-6 py-2 font-semibold text-red-100 shadow-md duration-75 hover:bg-red-400">Delete</button>

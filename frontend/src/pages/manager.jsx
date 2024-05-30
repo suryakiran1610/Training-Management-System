@@ -27,6 +27,8 @@ function Managerpage(){
     const [togglebatch,setTogglebatch]=useState(false)
     const [togglenotification,setTogglenotification]=useState(false)
     const [notifications,setNotifications]=useState([])
+    const [notifications1,setNotifications1]=useState([])
+
 
     const navigatee=useNavigate()
 
@@ -184,15 +186,16 @@ function Managerpage(){
     }
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/myapp/filterednotification/')
+        axios.get('http://127.0.0.1:8000/myapp/getallnotifications/')
         .then(response => {
-            setNotifications(response.data);
+            setNotifications1(response.data);
             console.log(response.data)
         })
         .catch(error => {
             console.log("error", error);
         });
     }, []);
+
 
     const fetchUserProfile = () => {
         const token=Cookies.get('token')

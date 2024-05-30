@@ -7,6 +7,8 @@ import Dashboard1 from "../components/trainer/dashboard1";
 import Attendance1 from "../components/trainer/attendence1";
 import Leave1 from "../components/trainer/leave1";
 import Batch1 from "../components/trainer/batch1";
+import Notifications1 from "../components/trainer/notification1";
+import Project1 from "../components/trainer/project1";
 
 function Trainerpage(){
     const [showDropdown, setShowDropdown] = useState(false);
@@ -15,8 +17,14 @@ function Trainerpage(){
     const [toggleattendence,setToggleAttendence]=useState(false)
     const [toggleleave,setToggleLeave]=useState(false)
     const [togglebatch,setTogglebatch]=useState(false)
+    const [togglenotification,setTogglenotification]=useState(false)
+    const [toggleproject,setToggleproject]=useState(false)
 
     const[userprofile,setUserprofile]=useState([])
+    const [notifications,setNotifications]=useState([])
+    const [notifications1,setNotifications1]=useState([])
+
+
 
     const navigatee=useNavigate()
 
@@ -32,13 +40,29 @@ function Trainerpage(){
         setToggleAttendence(false)
         setToggleLeave(false)
         setTogglebatch(false)
+        setTogglenotification(false)
+        setToggleproject(false)
 
     }  
+    const project=()=>{
+        setToggleproject(true)
+        setToggleDashboard(false)
+        setToggleAttendence(false)
+        setToggleLeave(false)
+        setTogglebatch(false)
+        setTogglenotification(false)
+
+    }
     const Attendence=()=>{
         setToggleAttendence(true)
         setToggleDashboard(false)
         setToggleLeave(false)
         setTogglebatch(false)
+        setTogglenotification(false)
+        setToggleproject(false)
+
+
+
 
 
     }
@@ -48,12 +72,29 @@ function Trainerpage(){
         setToggleAttendence(false)
         setToggleDashboard(false)
         setTogglebatch(false)
+        setTogglenotification(false)
+        setToggleproject(false)
+
+
     }
     const batch=()=>{
         setTogglebatch(true)
         setToggleLeave(false)
         setToggleAttendence(false)
         setToggleDashboard(false)
+        setTogglenotification(false)
+        setToggleproject(false)
+
+
+    }
+    const Notifications=()=>{
+        setTogglenotification(true)
+        setTogglebatch(false)
+        setToggleLeave(false)
+        setToggleAttendence(false)
+        setToggleDashboard(false)
+        setToggleproject(false)
+
     }
     
     const toggleDropdown = () => {
@@ -106,6 +147,40 @@ function Trainerpage(){
             user_image: newImage
         }));
     };
+
+    useEffect(() => {
+        updateNotification();
+    }, [togglenotification, toggledashboard]);
+
+    const updateNotification=()=>{
+        const token=Cookies.get('token')
+        const decoded=jwtDecode(token)
+        const type = { userid: decoded.user_id };
+
+        axios.get('http://127.0.0.1:8000/myapp/filterednotificationuserid1/',{ params: type })
+        .then(response => {
+            setNotifications1(response.data);
+            console.log(response.data)
+        })
+        .catch(error => {
+            console.log("error", error);
+        });
+
+    }
+
+    useEffect(()=>{
+        const token = Cookies.get('token');
+        const decoded = jwtDecode(token);
+        const type = { userid: decoded.user_id };
+        axios.get('http://127.0.0.1:8000/myapp/filterednotificationuserid/',{ params: type })
+        .then(response => {
+            setNotifications(response.data);
+            console.log(response.data)
+        })
+        .catch(error => {
+            console.log("error", error);
+        });
+    },[])
 
 
 
@@ -185,6 +260,7 @@ function Trainerpage(){
                         </a>
                         <a
                         className="text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out cursor-pointer"
+                        onClick={project}
                         >
                         <svg
                             className="w-6 h-6 fill-current inline-block"
@@ -254,10 +330,11 @@ function Trainerpage(){
                         </a>
                         
                         <a
+                            onClick={Notifications}
                             className="relative text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white hover:scale-105 rounded-md transition duration-150 ease-in-out cursor-pointer"
                             >
                             <div className="absolute left-0 top-0 bg-red-500 rounded-full">
-                                <span className="text-sm text-white p-1">12</span>
+                                <span className="text-sm text-white p-1">{notifications1.length}</span>
                             </div>
                             <svg
                                 className="w-6 h-6 fill-current inline-block"
@@ -275,6 +352,7 @@ function Trainerpage(){
                             <span>Notifications</span>
                         </a>
 
+
                     </div>
                     </div>
                 </div>
@@ -282,6 +360,9 @@ function Trainerpage(){
 
                 {toggledashboard &&
                     <Dashboard1 userProfile={userprofile} fetchUserProfile={fetchUserProfile} updateUserProfileImage={updateUserProfileImage} updateUserProfile={updateUserProfile} />
+                }
+                {toggleproject &&
+                    <Project1/>
                 }
                 {toggleattendence &&
                     <Attendance1/>
@@ -291,6 +372,9 @@ function Trainerpage(){
                 }
                 {togglebatch &&
                     <Batch1/>
+                }
+                {togglenotification &&
+                    <Notifications1 updateNotification={updateNotification} />
                 }
             </div>
             

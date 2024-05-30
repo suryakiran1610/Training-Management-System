@@ -12,7 +12,7 @@ function Batch1(){
     const [viewfilteredusers1, setViewfilteredusers1] = useState([]);
     const [toggleedit,setToggleedit]=useState(null)
     const [time,setTime]=useState("")
-    c
+    const [date,setDate]=useState("")
 
 
 
@@ -94,7 +94,60 @@ function Batch1(){
 
         const addtimeschedule=(index)=>{
             setToggleedit(index)
+            setTime("");
+            setDate("");
         }
+
+
+        const submit = (batchname) => {
+            const batchToUpdate = filteredbatch.find(batch => batch.batchname === batchname);
+    
+            const formData = new FormData();
+            formData.append('time', time || batchToUpdate.time);
+            formData.append('date', date || batchToUpdate.date);
+            formData.append('batchname', batchname);
+    
+            axios.put('http://127.0.0.1:8000/myapp/addschedule/', formData)
+                .then(response => {
+                    console.log("gotit", response.data);
+                    setToggleedit(null);
+                    
+                    setFilteredbatch(filteredbatch.map(batch => 
+                        batch.batchname === batchname 
+                        ? { ...batch, time: time || batch.time, date: date || batch.date } 
+                        : batch
+                    ));
+
+                    const notificationFormData = new FormData();
+                    console.log("fill",filteredbatch)
+                    notificationFormData.append('id',batchToUpdate.traineeid.join(','));
+                    notificationFormData.append('dept', batchToUpdate.dept);
+                    notificationFormData.append('type', "scheduleupdate");
+                    notificationFormData.append('message', "Batch Timing Has Changed");
+
+        
+                    axios.post('http://127.0.0.1:8000/myapp/notificationpost1/', notificationFormData)
+                        .then(notificationResponse => {
+                            console.log(notificationResponse.data);
+                        })
+                        .catch(error=>{
+                            console.log("notification error")
+                        })    
+
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        };
+
+        const formatTime = (timeString) => {
+            if (timeString) {
+                const [hours, minutes] = timeString.split(':');
+                return `${hours}:${minutes}`;
+            }
+            return timeString;
+        };
+    
 
     return(
         <>
@@ -108,24 +161,25 @@ function Batch1(){
                                         <div className="mx-auto mt-1 h-8 w-8 text-green-400">
                                             <img className="w-full h-full rounded-full" src={`http://127.0.0.1:8000${getdeptlogo(batch.dept)}`} alt="department image" />
                                         </div>
-                                        <h1 className="mt-2 text-center text-xl font-bold text-gray-500">{batch.batchname}</h1>
-                                        <p className="my-2 text-center text-sm text-gray-500 ">Trainer: <span className="font-serif font-bold">{batch.trainer}</span></p>
+                                        <h1 className="mt-2 text-center text-xl font-bold text-blue-500">{batch.batchname}</h1>
+                                        <p className="my-2 text-center text-sm text-gray-700 ">Trainer: <span className="font-serif  text-black font-bold">{batch.trainer}</span></p>
                                         <div className="flex flex-wrap justify-center items-center">
-                                            <p className="my-2 text-center text-sm text-gray-500"> Trainee:<span className="font-serif font-bold  flex flex-col">{getTraineeNames(batch.traineeid)}</span></p>
+                                            <p className="my-2 text-center text-sm text-gray-700"> Trainee:<span className="font-serif font-bold  text-black  flex flex-col">{getTraineeNames(batch.traineeid)}</span></p>
                                         </div>
                                         <div className="flex-col justify-center items-center">
-                                            <p className="my-1 text-center text-sm text-gray-500">Date: {batch.time}</p>
-                                            <p className="my-1 text-center text-sm text-gray-500">Time: {batch.time}</p>
+                                            <p className="my-1 text-center text-sm text-gray-500">Date:<span className="font-serif font-bold  text-black  flex flex-col">{batch.date}</span></p>
+                                            <p className="my-1 text-center text-sm text-gray-500">Time: <span className="font-serif font-bold  text-black  flex flex-col">{formatTime(batch.time)}</span></p>
                                         </div>
                                         {toggleedit === index && (
+        
                                             <div className="w-full">
                                                 <div className="w-full flex justify-center items-center mt-4">
-                                                    <input className="cursor-pointer" type="time"></input>
-                                                    <input className=" bg-slate-200 rounded-md w-28 ml-4" type="text"></input>
+                                                    <input onChange={(e)=>setTime(e.target.value)} className="cursor-pointer" type="time"></input>
+                                                    <input onChange={(e)=>setDate(e.target.value)} className=" bg-slate-200 rounded-md w-28 ml-4" type="text"></input>
                                                 </div>
                                                 <div className="w-full flex justify-center items-center mt-4">
                                                     <button className="bg-orange-500 w-16 h-7 rounded-md text-white mr-4" onClick={()=>{setToggleedit(null)}}>Cancel</button>
-                                                    <button className="bg-green-500 w-16 h-7 rounded-md text-white" type="submit">Save</button>
+                                                    <button className="bg-green-500 w-16 h-7 rounded-md text-white" onClick={()=>{submit(batch.batchname)}}>Save</button>
                                                 </div>
                                             </div>
                                         )}

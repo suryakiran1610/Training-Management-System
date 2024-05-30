@@ -6,7 +6,9 @@ from .models import attendence
 from .models import traineeattendence
 from . models import leave
 from .models import batch
-from.models import notification
+from .models import notification
+from .models import project
+from .models import projectsubmit
 
 class userserializer(serializers.ModelSerializer):
     class Meta:
@@ -46,3 +48,13 @@ class notificationserializer(serializers.ModelSerializer):
     class Meta:
         model=notification
         fields='__all__'
+
+class projectserializer(serializers.ModelSerializer):        
+    class Meta:
+        model=project
+        fields='__all__'
+
+class projectsubmitserializer(serializers.ModelSerializer):        
+    class Meta:
+        model=projectsubmit
+        fields='__all__'        
