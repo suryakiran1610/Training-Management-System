@@ -8,6 +8,7 @@ urlpatterns=[
     path('users/',views.Users,name="users"),
     path('departments/',views.Departments,name="departments"),
     path('profiledetails/<int:pk>',views.Profiledetails,name="profiledetails"),
+    path('certificates/',views.Certificates,name="certificates"),
     path('verifypassword/',views.Verifypassword,name="verifypassword"),
     path('allusersprofile/',views.allUsersProfile,name="allusersprofile"),
     path('userlistdelete/<int:pk>',views.Userlistdelete,name='userlistdelete'),
@@ -79,6 +80,17 @@ urlpatterns=[
 
     path('filterednotificationuserid4/',views.Filterednotificationuserid4,name="filterednotificationuserid4"),
     path('filterednotificationuserid5/',views.Filterednotificationuserid5,name="filterednotificationuserid5"),
+    path('filteredprojecttrainee/',views.Filteredprojecttrainee,name="filteredprojecttrainee"),
+
+    path('filteredproject1/',views.Filteredproject1,name="filteredproject1"),
+    path('addprojectimage/',views.Addprojectimage,name="addprojectimage"),
+
+    path('notificationpost4/',views.Notificationpost4,name="notificationpost4"),
+    path('filteredprojecttrainee1/',views.Filteredprojecttrainee1,name="filteredprojecttrainee1"),
+
+
+
+
 
 
 

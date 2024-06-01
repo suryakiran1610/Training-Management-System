@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
+import { IoCloudDownload } from "react-icons/io5";
+import { Image } from 'antd';
+import { saveAs } from 'file-saver';
+
 
 
 function Users() {
@@ -8,9 +12,11 @@ function Users() {
     const [trainees, setTrainees] = useState(false);
     const [usertypedetails,setUsertypedetails]=useState(false)
     const[toggleedit,setToggleedit]=useState(false)
+    const [togglecertificates,setTogglecertificates]=useState(false)
     const [trainerprofile, setTrainerprofile] = useState([]);
     const [traineeprofile, setTraineeprofile] = useState([]);
     const [userprofile,setUserprofile]= useState([])
+    const [usercertificates,setUsercertificates]=useState([])
 
 
     const[username,setUsername]=useState("")
@@ -25,6 +31,7 @@ function Users() {
         setTrainers(true);
         setTrainees(false);
         setUsertypedetails(false)
+        setTogglecertificates(false)
 
         const type = { usertype: "Trainer" };
 
@@ -42,6 +49,7 @@ function Users() {
         setTrainees(true);
         setTrainers(false);
         setUsertypedetails(false)
+        setTogglecertificates(false)
 
         const type = { usertype: "Trainee" };
 
@@ -59,6 +67,7 @@ function Users() {
         setTrainers(false);
         setTrainees(false);
         setUsertypedetails(true)
+        setTogglecertificates(true)
 
         axios.get('http://127.0.0.1:8000/myapp/profiledetails/'+userid)
         .then(response => {
@@ -68,6 +77,21 @@ function Users() {
         .catch(error => {
             console.log("error", error);
         });
+
+        axios.get('http://127.0.0.1:8000/myapp/certificates/',{ params: { userid1:userid } })
+        .then(response => {
+            setUsercertificates(response.data);
+            console.log(response.data)
+        })
+        .catch(error => {
+            console.log("error", error);
+        });
+
+    }
+
+    const download=(image)=>{
+        const img= `http://127.0.0.1:8000${image}`;
+        saveAs(img,image)
     }
 
     const deletettrainer = (userId) => {
@@ -140,6 +164,7 @@ function Users() {
 
     const edit=()=>{
         setToggleedit(true)
+        setTogglecertificates(false)
     }
 
     const handlesubmit=(e,userid)=>{
@@ -170,6 +195,7 @@ function Users() {
             theme: "colored",
         });
         setToggleedit(false)
+        setTogglecertificates(true)
 
         })
         .catch(error => {
@@ -297,7 +323,7 @@ function Users() {
                     {usertypedetails && 
                         <div className="flex flex-col md:h-full md:w-full h-screen w-full bg-gradient-to-r from-blue-50 to-blue-100 ">
             
-                            <div className="flex flex-col md:flex-row justify-center md:h-2/4 h-3/5 w-full " >
+                            <div className="flex  flex-col md:flex-row justify-center md:h-2/4 h-3/5 w-full " >
                                 <div className="md:order-1 w-4/6 md:w-2/6 md:h-3/4 h-5/6 flex flex-col justify-center items-center md:mt-6 ml-9 shadow-2xl rounded-md bg-white mt-6">
                                     <div className="relative block h-32 w-32 rounded-full overflow-hidden shadow focus:outline-none">
                                         <img src={`http://127.0.0.1:8000${userprofile.user_image}`} alt="User Profile"  className="h-full w-full object-cover" />
@@ -305,10 +331,13 @@ function Users() {
                                     <div className="mt-4 font-bold font-sans text-xl">
                                         <h1>{`${userprofile.first_name} ${userprofile.last_name}`}</h1>
                                     </div>
+                                    <div className="font-sans text-base">
+                                        <h1>{userprofile.dept}</h1>
+                                    </div>
                                 </div>
                 
-                                <div className="md:order-2 shadow-2xl mt-6 w-11/12 md:w-3/6 h-full flex flex-col justify-evenly items-center ml-3 rounded-xl bg-white md:font-bold md:text-base font-serif text-sm">
-                                    <h1 className="font-serif font-bold ">Profile Details</h1>
+                                <div className="md:order-2 p-2 shadow-2xl mt-6 w-11/12 md:w-3/6 h-full flex flex-col justify-evenly items-center ml-3 rounded-xl bg-white md:font-bold md:text-base font-serif text-sm">
+                                    <h1 className="font-serif font-bold text-orange-600">Profile Details</h1>
                                     <div className="md:flex w-full justify-evenly">
                                         <div className="flex justify-center ">
                                             <label>FirstName:</label>
@@ -344,6 +373,26 @@ function Users() {
                                     </div>
                                 </div>
                             </div>
+                            {togglecertificates && (
+                                <div className="flex h-1/2 md:h-2/5 md:w-3/4 w-11/12 md:mt-0 mt-8 md:mb-9 mb-0 md:ml-24">
+                                    <div className="md:order-1 w-full md:w-2/5 md:h-4/5 h-4/6 flex flex-col justify-center items-center ml-3 shadow-2xl rounded-xl bg-white">
+                                        <h1 className="font-serif font-bold mb-3 text-orange-600">Certificates</h1>
+                                        {usercertificates.map((img, index) => (
+                                            <div key={index} className="px-4 py-3 text-sm  font-semibold w-full">
+                                                <div className="flex justify-evenly items-center">
+                                                    <div className="relative w-8 h-8 mr-3 md:block cursor-pointer">
+                                                        <Image className="object-cover w-full h-full" src={`http://127.0.0.1:8000${img.degreeimage}`} alt="User Profile" />
+                                                    </div>
+                                                    <div className="mb-3">
+                                                        <button onClick={() => { download(img.degreeimage) }} className=" h-6 w-20 cursor-pointer rounded-md bg-indigo-500 text-white hover:bg-indigo-800">Download</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             {toggleedit &&
                                 <div className="flex h-2/3 md:h-3/5 md:w-full w-11/12 mt-8  md:mb-9 mb-0" >
                                     <div className="md:order-1 w-full md:w-2/5 md:h-4/5 h-4/6 flex flex-col justify-center items-center ml-3 shadow-2xl rounded-xl bg-white">
@@ -375,7 +424,7 @@ function Users() {
                                             </div>
                                             <div className=" flex mt-3">
                                                 <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm md:px-6 px-4 md:py-2.0 py-1.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save</button>
-                                                <button onClick={() => { setToggleedit(false) }} type="button" className="text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm md:px-6 px-4 md:py-2.0 py-1.5 text-center me-2 mb-2 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">Cancel</button>
+                                                <button onClick={() => { setToggleedit(false),setTogglecertificates(true) }} type="button" className="text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm md:px-6 px-4 md:py-2.0 py-1.5 text-center me-2 mb-2 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">Cancel</button>
                                             </div>
                                         </form>
                                     </div>

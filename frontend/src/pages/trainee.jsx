@@ -7,7 +7,7 @@ import Dashboard2 from "../components/trainee/dashboard2";
 import Attendance2 from "../components/trainee/attendence2";
 import Leave2 from "../components/trainee/leave2";
 import Notifications2 from "../components/trainee/notification2";
-import Project1 from "../components/trainer/project1";
+import Project2 from "../components/trainee/project2";
 
 function Traineepage(){
     const [showDropdown, setShowDropdown] = useState(false);
@@ -236,7 +236,7 @@ function Traineepage(){
                         <h2 className="font-medium text-xs md:text-sm text-center text-teal-500">
                             {`${userprofile.first_name} ${userprofile.last_name}`}
                         </h2>
-                        <p className="text-xs text-gray-500 text-center">Trainer</p>
+                        <p className="text-xs text-gray-500 text-center">Trainee</p>
                         </div>
                     </div>
 
@@ -352,6 +352,9 @@ function Traineepage(){
                 }
                 {toggleleave &&
                     <Leave2/>
+                }
+                {toggleproject &&
+                    <Project2/>
                 }
             </div>
             

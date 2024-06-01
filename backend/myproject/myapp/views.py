@@ -135,7 +135,17 @@ def Profiledetails(request,pk):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
-    
+
+@api_view(['GET'])
+def Certificates(request):
+    userid_entered = request.query_params.get('userid1') 
+    if userid_entered:
+        certificate=degreecertificates.objects.filter(userid=userid_entered)
+        serializer=degreeimgserializer(certificate,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400) 
+
 @api_view(['POST','PUT'])
 def Verifypassword(request):
         if request.method=="POST":
@@ -507,7 +517,7 @@ def Filterednotification(request):
 
 @api_view(['GET'])
 def Allleaveget(request):
-    depts=leave.objects.all()
+    depts=leave.objects.filter(status="Pending")
     serializer=leaveserializer(depts,many=True)
     return Response(serializer.data)  
 
@@ -777,3 +787,72 @@ def Filterednotificationuserid5(request):
         return Response(serializer.data)  
     else:
         return Response({"error": "User type not provided"}, status=400)      
+    
+@api_view(['GET'])
+def Filteredprojecttrainee(request):
+
+    traineeid_entered = request.query_params.get('traineeid') 
+    print(traineeid_entered)
+    if traineeid_entered:
+        project1=project.objects.filter(traineeid=traineeid_entered,status="Assigned")
+        serializer=projectserializer(project1,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)     
+    
+@api_view(['GET'])
+def Filteredproject1(request):
+
+    projectid_entered = request.query_params.get('projectid') 
+    print(projectid_entered)
+    if projectid_entered:
+        project1=project.objects.filter(id=projectid_entered)
+        serializer=projectserializer(project1,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)        
+
+@api_view(['PUT'])
+def Addprojectimage(request):
+    projectid_entered = request.data.get('projectid') 
+    pro_image = request.data.get('image')
+    print(projectid_entered,pro_image)
+    try:
+        product_record = project.objects.get(id=projectid_entered)
+        product_record.image = pro_image
+        product_record.status="Submitted"
+        product_record.save()
+
+        return Response({'message':"projectsubmitted"}, status=status.HTTP_200_OK)
+    except leave.DoesNotExist:
+        return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)    
+    
+@api_view(['POST'])
+def Notificationpost4(request):
+    serializer = notificationserializer(data=request.data)
+    print(request.data)
+    if serializer.is_valid():
+        dept1 = request.data.get('dept')
+        type1 = request.data.get('type')
+        message1 = request.data.get('message')
+        trainerid1=request.data.get('trainerid')
+        notificationdata = notification.objects.create(trainerid=trainerid1,dept=dept1,type=type1,message=message1) 
+        response_serializer = notificationserializer(notificationdata)
+
+        return Response(response_serializer.data)
+    else:
+        print("Serializer errors:", serializer.errors)
+        return Response(serializer.errors)    
+
+
+@api_view(['GET'])
+def Filteredprojecttrainee1(request):
+
+    traineeid_entered = request.query_params.get('traineeid') 
+    print(traineeid_entered)
+    if traineeid_entered:
+        project1=project.objects.filter(traineeid=traineeid_entered,status="Submitted")
+        serializer=projectserializer(project1,many=True)
+        return Response(serializer.data)  
+    else:
+        return Response({"error": "User type not provided"}, status=400)            

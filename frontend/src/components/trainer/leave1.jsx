@@ -124,7 +124,7 @@ function Leave1(){
                                     htmlFor="guest"
                                     className="mb-3 block text-base font-medium text-[#07074D]"
                                     >
-                                    Reason htmlFor Applying Leave
+                                    Reason For Applying Leave
                                     </label>
                                     <input
                                     type="text"

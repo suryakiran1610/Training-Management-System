@@ -14,6 +14,7 @@ function Project1(){
     const [toggleaddproject,setToggleaddproject]=useState(false)
     const [toggleviewproject,setToggleviewproject]=useState(false)
     const [batchh, setBatchh] = useState("");
+    const [batchhh, setBatchhh] = useState("");
     const [projectname,setProjectname]=useState("")
     const [start,setStart]=useState("")
     const [end,setEnd]=useState("")
@@ -34,7 +35,7 @@ function Project1(){
 
         const formData = new FormData();
         formData.append('projectname',projectname);
-        formData.append('batchname', batchh);
+        formData.append('batchname', batchhh);
         formData.append('trainerid', decoded.user_id);
         formData.append('trainername', decoded.userfullname);
         formData.append('department', decoded.department);
@@ -43,7 +44,7 @@ function Project1(){
         formData.append('status', "Assigned");
 
         filteredTrainees.forEach(trainee => {
-            formData.append('traineeid', trainee.id);
+            formData.append('traineeid', trainee);
             formData.append('traineename', trainee.first_name + " " + trainee.last_name);
         });
 
@@ -65,24 +66,22 @@ function Project1(){
                 fetchProjects();
 
                 const notificationFormData = new FormData();
-                    notificationFormData.append('dept',decoded.department);
-                    notificationFormData.append('type', "newproject");
-                    notificationFormData.append('message', "New Project Assigned");
+                notificationFormData.append('dept',decoded.department);
+                notificationFormData.append('type', "newproject");
+                notificationFormData.append('message', "New Project Assigned");
 
-                    const traineeIds = filteredTrainees.map(trainee => trainee.id);
-                    traineeIds.forEach(id => {
-                    notificationFormData.append('traineeid',id);
-                    }) 
+                filteredTrainees.forEach(id => {
+                notificationFormData.append('traineeid',id);
+                }) 
 
-        
-                    axios.post('http://127.0.0.1:8000/myapp/notificationpost2/', notificationFormData)
-                        .then(notificationResponse => {
-                            console.log(notificationResponse.data);
-                        })
-                        .catch(error=>{
-                            console.log("notification error")
-                        })    
 
+                axios.post('http://127.0.0.1:8000/myapp/notificationpost2/', notificationFormData)
+                    .then(notificationResponse => {
+                        console.log(notificationResponse.data);
+                    })
+                    .catch(error=>{
+                        console.log("notification error")
+                    })    
             })    
             .catch(error=>{
                 console.log(error)
@@ -132,8 +131,11 @@ function Project1(){
             }
         });
 
+
         return Array.from(batchMap.values());
     };
+
+
 
     useEffect(() => {
         const token=Cookies.get('token')
@@ -190,9 +192,13 @@ function Project1(){
     },[])
 
     const traineeProfileMap = traineeprofile.reduce((map, profile) => {
-        map[profile.id] = profile.user_image;
+        map[profile.id] = {
+            user_image: profile.user_image,
+            full_name: `${profile.first_name} ${profile.last_name}`,
+        };
         return map;
     }, {});
+    
 
 
 
@@ -209,6 +215,17 @@ function Project1(){
             });
 
     },[])
+
+    useEffect(() => {
+        if (batchhh) {
+            const selectedBatch = batch.find(bat => bat.batchname === batchhh);
+            if (selectedBatch) {
+                setFilteredTrainees(selectedBatch.traineeid);
+            } else {
+                setFilteredTrainees([]);
+            }
+        }
+    }, [batchhh, batch]);
 
     const deleteproject=(Id)=>{
         const type = { projectid: Id };
@@ -264,7 +281,7 @@ function Project1(){
                                         </div>
                                         <div className="flex  items-center md:mt-0 md:ml-3 mt-5">
                                             <label htmlFor="title" className="text-lx font-serif mr-2">Batch:</label>
-                                            <select onChange={(e) => { setBatchh(e.target.value) }}
+                                            <select onChange={(e) => { setBatchhh(e.target.value) }}
                                                 className="md:w-full w-2/4 rounded-r border-t sm:rounded-r-none sm:border-r border-b border-l border-r block bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
                                                 <option>All</option>
                                                 {batch.map((bat, index) => (
@@ -315,11 +332,11 @@ function Project1(){
                                                         <td className="px-4 py-3 border">
                                                             <div className="flex items-center text-sm">
                                                                 <div className="relative w-8 h-8 mr-3 rounded-full md:block">
-                                                                    <img className="object-cover w-full h-full rounded-full" src={`http://127.0.0.1:8000${traineeProfileMap[profile.traineeid]}`} alt="User Profile" />
+                                                                    <img className="object-cover w-full h-full rounded-full" src={`http://127.0.0.1:8000${traineeProfileMap[profile.traineeid].user_image}`} alt="User Profile" />
                                                                 <div className="absolute inset-0 rounded-full shadow-inner" aria-hidden="true"></div>
                                                                 </div>
                                                                 <div>
-                                                                    <p className="font-semibold text-black">{profile.traineename}</p>
+                                                                    <p className="font-semibold text-black">{traineeProfileMap[profile.traineeid].full_name}</p>
                                                                     <p className="text-xs text-gray-600">{profile.usertype}</p>
                                                                 </div>
                                                             </div>

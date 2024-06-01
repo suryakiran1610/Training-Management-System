@@ -4,6 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import Cookies from 'js-cookie';
 import { HiCalendar } from "react-icons/hi";
 import { FaAllergies } from "react-icons/fa";
+import { TiTick } from "react-icons/ti";
 
 function Notifications1(props){
     const [allnotifications,setAllnotifications]=useState([])
@@ -181,7 +182,27 @@ function Notifications1(props){
                                     </div>
                                 </div>
                             
-                             ): null}    
+                             ):notification.type === 'projectsubmitted' ? (
+                                <div onClick={()=>{readed(notification.id)}} key={index}  className={`w-full p-3 mt-4 rounded shadow hover:shadow-lg transition-shadow duration-300 ease-in-out flex flex-shrink-0 ${notification.isread ? 'bg-white' : 'bg-blue-200'}`}>
+                                    <div tabIndex="0" aria-label="group icon" role="img" className="focus:outline-none w-8 h-8 border rounded-full border-gray-200 flex flex-shrink-0 items-center justify-center">
+                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <TiTick className="text-green-600" />
+                                            </svg>
+                                    </div>
+                                    <div className="pl-3 w-auto md:w-2/5 flex-col">
+                                        <div className="flex items-center justify-between">
+                                            <p tabIndex="0" className="focus:outline-none text-sm leading-none"><span className="text-indigo-700">{notification.username}</span> {notification.message} </p>
+                                        </div>  
+                                        <p tabIndex="0" className="focus:outline-none text-xs leading-3 pt-1 text-gray-500"><span className="text-indigo-700"> {notification.dept}</span> Department</p>
+                                    </div> 
+                                    <div className="focus:outline-none cursor-pointer flex w-3/5 justify-end">
+                                            <svg onClick={()=>{deletenotification(notification.id)}} width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M10.5 3.5L3.5 10.5" stroke="#4B5563" strokeWidth="1.25"  strokeLinejoin="round" />
+                                                <path d="M3.5 3.5L10.5 10.5" stroke="#4B5563" strokeWidth="1.25"  strokeLinejoin="round" />
+                                            </svg>
+                                    </div>
+                                </div>
+                             ):null}      
                         </div>
                     ))}    
                 </div>
