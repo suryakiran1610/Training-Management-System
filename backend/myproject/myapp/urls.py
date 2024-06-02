@@ -88,6 +88,7 @@ urlpatterns=[
     path('notificationpost4/',views.Notificationpost4,name="notificationpost4"),
     path('filteredprojecttrainee1/',views.Filteredprojecttrainee1,name="filteredprojecttrainee1"),
 
+    path('notificationpost5/',views.Notificationpost5,name="notificationpost5"),
 
 
 

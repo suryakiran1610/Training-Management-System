@@ -102,9 +102,10 @@ def Departments(request):
 def Loginview(request):
     username=request.data['username']
     password=request.data['password']
-    user=authenticate(username=username,password=password)
-        
 
+    user=authenticate(username=username,password=password)
+
+    
     if user:
         refresh=RefreshToken.for_user(user)
         if user.is_superuser:
@@ -119,7 +120,7 @@ def Loginview(request):
       
         return Response({"token":str(refresh.access_token)})
     else:
-        return Response({"error":"Invalid Credentials"})
+        return Response({"error":"User not Activated / Invalid Credentials"})
     
 @api_view(['GET','PUT'])
 def Profiledetails(request,pk):
@@ -856,3 +857,34 @@ def Filteredprojecttrainee1(request):
         return Response(serializer.data)  
     else:
         return Response({"error": "User type not provided"}, status=400)            
+    
+
+
+@api_view(['POST'])
+def Notificationpost5(request):
+    dept1 = request.data.get('dept')
+    type1 = request.data.get('type')
+    message1 = request.data.get('message')
+    trainer_ids = request.data.get('trainerid').split(',')
+    user_ids = request.data.get('id').split(',')
+    
+    notifications = []
+    
+    for user_id in user_ids:
+        try:
+            user_id_int = int(user_id.strip())
+            notificationdata = notification.objects.create(dept=dept1, type=type1, message=message1, userid=user_id_int)
+            notifications.append(notificationdata)
+        except ValueError:
+            return Response({"error": f"Invalid user ID: {user_id}"}, status=400)
+
+    for trainer_id in trainer_ids:
+        try:
+            trainer_id_int = int(trainer_id.strip())
+            notificationdata = notification.objects.create(trainerid=trainer_id_int, dept=dept1, type=type1, message=message1)
+            notifications.append(notificationdata)
+        except ValueError:
+            return Response({"error": f"Invalid trainer ID: {trainer_id}"}, status=400)
+    
+    response_serializer = notificationserializer(notifications, many=True)
+    return Response(response_serializer.data)

@@ -1,5 +1,5 @@
 .custom-calendar {
-    background: #eeeaea;
+    background: #eeebeb;
     border: 1px solid #e4e7eb;
     border-radius: 6px;
     box-shadow: 0 4px 8px rgba(0.4, 0.3, 0.3, 0.3);
@@ -27,7 +27,7 @@
 
 
 .react-datepicker__header {
-    background: #eeeaea;
+    background: #ffffff;
     border-bottom: 1px solid #e4e7eb;
 }
 
