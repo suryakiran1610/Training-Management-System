@@ -106,7 +106,8 @@ function Batch1(){
             formData.append('time', time || batchToUpdate.time);
             formData.append('date', date || batchToUpdate.date);
             formData.append('batchname', batchname);
-    
+
+            if(time,date){
             axios.put('http://127.0.0.1:8000/myapp/addschedule/', formData)
                 .then(response => {
                     console.log("gotit", response.data);
@@ -138,6 +139,7 @@ function Batch1(){
                 .catch(error => {
                     console.log(error);
                 });
+            }   
         };
 
         const formatTime = (timeString) => {

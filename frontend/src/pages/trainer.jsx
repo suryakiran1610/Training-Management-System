@@ -31,9 +31,7 @@ function Trainerpage(){
 
 
 
-    const toggleSidenav = () => {
-        setSidenav(!sidenav);
-    };
+
 
     const dashboard=()=>{
         setToggleDashboard(true)
@@ -205,23 +203,7 @@ function Trainerpage(){
             </div>
 
             <div id="view" className="md:h-screen w-full flex flex-row h-full "> 
-                <button
-                    onClick={toggleSidenav}
-                    className="p-2 border-2 bg-white rounded-md border-gray-200 shadow-lg text-gray-500 focus:bg-teal-500 focus:outline-none focus:text-white absolute  sm:hidden"
-                >
-                    <svg
-                    className="w-5 h-5 fill-current"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                    >
-                    <path
-                        fillRule="evenodd"
-                        d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                        clipRule="evenodd"
-                    ></path>
-                    </svg>
-                </button>
+                
                 {sidenav &&
                 <div
                     id="sidebar"

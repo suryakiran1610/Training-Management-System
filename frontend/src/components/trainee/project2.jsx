@@ -10,7 +10,7 @@ import { Image } from 'antd';
 import { saveAs } from 'file-saver';
 
 function Project2(){
-    const [toggletodo,setToggletodo]=useState(false)
+    const [toggletodo,setToggletodo]=useState(true)
     const [togglesubmitted,setTogglesubmitted]=useState(false)
     const [filteredProjects, setFilteredProjects] = useState([]);
     const [selectedProject, setSelectedProject] = useState(null);
@@ -81,11 +81,15 @@ function Project2(){
             const formData = new FormData();
                 formData.append('image',image);
                 formData.append('projectid',selectedProject.id);
-    
+
+                if(image){
                 axios.put('http://127.0.0.1:8000/myapp/addprojectimage/', formData)
                     .then(response => {
                         console.log(response.data);
                         setToggleaddimage(false)
+                        setTogglesubmitted(true)
+                        Viewsubmitted()
+                        setToggletodo(false)
 
                         const notificationFormData = new FormData();
                         notificationFormData.append('dept',selectedProject.department);
@@ -106,7 +110,8 @@ function Project2(){
                     })
                     .catch(error=>{
                         console.log(error)
-                    })    
+                    })
+                }                  
     }
 
     const download=(image)=>{
@@ -221,7 +226,7 @@ function Project2(){
                                                     <td className="px-4 py-3 text-sm border font-semibold">
                                                         <div className="flex justify-evenly items-center">
                                                             <div className="relative w-8 h-8 mr-3 md:block cursor-pointer">
-                                                                <Image className="object-cover w-full h-full" src={`http://127.0.0.1:8000${profile.image}`} alt="User Profile" />
+                                                                <Image className="object-cover w-full h-full" src={`http://127.0.0.1:8000${profile.image}`} alt="project" />
                                                             </div>
                                                             <div className="mb-3">
                                                                 <IoCloudDownload onClick={()=>{download(profile.image)}} className="cursor-pointer text-gray-500 text-lg" />

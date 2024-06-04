@@ -11,7 +11,7 @@ import { saveAs } from 'file-saver';
 
 
 function Project1(){
-    const [toggleaddproject,setToggleaddproject]=useState(false)
+    const [toggleaddproject,setToggleaddproject]=useState(true)
     const [toggleviewproject,setToggleviewproject]=useState(false)
     const [batchh, setBatchh] = useState("");
     const [batchhh, setBatchhh] = useState("");
@@ -33,6 +33,7 @@ function Project1(){
         const token=Cookies.get('token')
         const decoded=jwtDecode(token)
 
+        if(projectname,batchhh,start,end){
         const formData = new FormData();
         formData.append('projectname',projectname);
         formData.append('batchname', batchhh);
@@ -85,7 +86,19 @@ function Project1(){
             })    
             .catch(error=>{
                 console.log(error)
-            })    
+            }) 
+        }else{
+            toast.error("Provide full Details", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }       
     }
 
     const Addproject=()=>{

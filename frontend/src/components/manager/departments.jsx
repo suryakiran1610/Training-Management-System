@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 function Departments() {
-    const [toggleView, setToggleView] = useState(false);
+    const [toggleView, setToggleView] = useState(true);
     const [toggleAdd, setToggleAdd] = useState(false);
     const [togglemessage,setTogglemessage]=useState(false)
     const [departments, setDepartments] = useState([]);
@@ -61,6 +61,44 @@ function Departments() {
                 console.log("error", error);
             });
     };
+
+
+    useEffect(()=>{
+    axios.get('http://127.0.0.1:8000/myapp/departments/')
+    .then(response => {
+        setDepartments(response.data);
+        console.log("dept",response.data)
+    })
+    .catch(error => {
+        console.log("error", error);
+    });
+    },[])
+
+    useEffect(()=>{
+    axios.get('http://127.0.0.1:8000/myapp/allUsersfilter/', { params: { usertype: "Trainer" } })
+        .then(response => {
+            setTrainers(response.data);
+            console.log("trainer",response.data)
+
+        })
+        .catch(error => {
+            console.log("error", error);
+        });
+    },[])    
+
+    useEffect(()=>{
+        axios.get('http://127.0.0.1:8000/myapp/allUsersfilter/', { params: { usertype: "Trainee" } })
+    .then(response => {
+        setTrainees(response.data);
+        console.log("trainee",response.data)
+
+    })
+    .catch(error => {
+        console.log("error", error);
+    });
+    },[])
+
+
 
     const countUsersInDept = (department, users) => {
         return users.filter(user => user.dept === department).length;
@@ -238,7 +276,7 @@ function Departments() {
                     notificationFormData.append('type', "message");
                     notificationFormData.append('message', messages);
 
-        
+                    if(trainees1,trainers1,messages){
                     axios.post('http://127.0.0.1:8000/myapp/notificationpost5/', notificationFormData)
                         .then(notificationResponse => {
                             console.log(notificationResponse.data);
@@ -257,6 +295,7 @@ function Departments() {
                         .catch(error=>{
                             console.log("notification error")
                         })    
+                    }    
         }
 
     return (

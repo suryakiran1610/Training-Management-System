@@ -67,6 +67,7 @@ def Register(request):
         print("Serializer errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 def sendemail(email, otp):
     subject = "Greetings from Training Department"
     message = f"""Congratulations,
@@ -121,7 +122,8 @@ def Loginview(request):
         return Response({"token":str(refresh.access_token)})
     else:
         return Response({"error":"User not Activated / Invalid Credentials"})
-    
+
+
 @api_view(['GET','PUT'])
 def Profiledetails(request,pk):
     userprofile=get_object_or_404(user,id=pk)
@@ -137,6 +139,7 @@ def Profiledetails(request,pk):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
 
+
 @api_view(['GET'])
 def Certificates(request):
     userid_entered = request.query_params.get('userid1') 
@@ -146,6 +149,7 @@ def Certificates(request):
         return Response(serializer.data)  
     else:
         return Response({"error": "User type not provided"}, status=400) 
+
 
 @api_view(['POST','PUT'])
 def Verifypassword(request):
@@ -192,6 +196,7 @@ def Userlistdelete(request,pk):
     users=get_object_or_404(user,id=pk)
     users.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)    
+
 
 @api_view(['POST'])
 def Attendence(request):

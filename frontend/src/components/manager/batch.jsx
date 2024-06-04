@@ -9,7 +9,7 @@ import { ImCross } from "react-icons/im";
 
 
 function Batch() {
-    const [selecttab, setSelecttab] = useState(false);
+    const [selecttab, setSelecttab] = useState(true);
     const [viewtab, setViewtab] = useState(false);
     const [deptss, setDeptss] = useState([]);
     const [filteredusers, setFilteredusers] = useState([]);
@@ -85,6 +85,28 @@ function Batch() {
             
             
     };
+
+    useEffect(()=>{
+        axios.get('http://127.0.0.1:8000/myapp/departments/')
+            .then(response => {
+                setDeptss(response.data);
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.log("error", error);
+            });
+    },[])
+
+    useEffect(()=>{
+        axios.get('http://127.0.0.1:8000/myapp/getallbatches/')
+            .then(response => {
+                console.log("all",response.data)
+                setAllbatchesnames(response.data)
+            })
+            .catch(error => {
+                console.log("error", error);
+            });
+    },[])
 
     useEffect(() => {
         if (department && department !== "select") {
@@ -213,6 +235,20 @@ useEffect(() => {
     const addbatchto = (e) => {
         e.preventDefault();
 
+        if (!department || !trainer || !batchname || !trainees ) {
+            toast.error("All fields are required", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+            return;
+        }
+
         const selectedTrainer = allregusers.find(user => user.id.toString() === trainer.toString());
 
         console.log("selectedTrainer:", selectedTrainer);
@@ -232,6 +268,8 @@ useEffect(() => {
             .then(response => {
                 console.log(response.data);
                 setSelecttab(false);
+                setViewtab(true);
+                setToggleselectview(true);
                 toast.success("Batch Added", {
                     position: "top-right",
                     autoClose: 5000,
@@ -288,6 +326,17 @@ useEffect(() => {
                 console.log("error", error);
             });
     };
+
+    useEffect(()=>{
+        axios.get('http://127.0.0.1:8000/myapp/departments/')
+            .then(response => {
+                setViewdeptss(response.data);
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.log("error", error);
+            });
+    },[])
 
     useEffect(() => {
         if (viewdepartment && viewdepartment !== "select") {
@@ -519,7 +568,7 @@ useEffect(() => {
                                         <div className="mb-4">
                                             <label htmlFor="title" className="text-lx font-serif">Dept:</label>
                                             <select onChange={(e) => { setDepartment(e.target.value) }}
-                                                className="ml-2 outline-none py-1 px-5 text-md border-2 rounded-md">
+                                               required className="ml-2 outline-none py-1 px-5 text-md border-2 rounded-md">
                                                 <option>All</option>
                                                 {deptss.map((department, index) => (
                                                     <option key={index}>{department.dept}</option>
@@ -531,7 +580,7 @@ useEffect(() => {
                                             <label htmlFor="name" className="text-lx font-serif">Trainer:</label>
                                             <select
                                                 onChange={(e) => setTrainer(e.target.value)}
-                                                className="ml-2 outline-none py-1 px-2 md:px-4 text-md border-2 rounded-md"
+                                                required className="ml-2 outline-none py-1 px-2 md:px-4 text-md border-2 rounded-md"
                                             >
                                                 <option>Select User</option>
                                                 {filteredusers.map((user, index) => (
@@ -542,7 +591,7 @@ useEffect(() => {
                                         <div className="">
                                             <div className=" flex justify-center items-center ">
                                                 <label htmlFor="email" className="text-lx font-serif">Name:</label>
-                                                <input onChange={(e) => setBatchname(e.target.value)} type="text" placeholder="name" id="email" className="ml-2 outline-none py-1 w-36 px-1 text-md border-2 rounded-md" />
+                                                <input onChange={(e) => setBatchname(e.target.value)} type="text" required placeholder="name" id="email" className="ml-2 outline-none py-1 w-36 px-1 text-md border-2 rounded-md" />
                                                 {nameExists ? (
                                                     <div className="w-4 m-0">
                                                         <ImCross className="text-red-600 " />
@@ -559,6 +608,7 @@ useEffect(() => {
                                         <div className="mb-3 flex items-center">
                                             <label htmlFor="title" className="text-lx font-serif">Trainee:</label>
                                             <Select
+                                                required
                                                 isMulti
                                                 onChange={handleTraineesChange}
                                                 options={filteredusers1.map(user => ({ value: user.id, label: user.first_name + " " + user.last_name }))}

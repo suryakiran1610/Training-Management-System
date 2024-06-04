@@ -9,7 +9,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './CustomDatePicker.css';
 
 function Attendence() {
-    const [trainerattendence, setTrainerattendence] = useState(false);
+    const [trainerattendence, setTrainerattendence] = useState(true);
     const [trainerprofile, setTrainerprofile] = useState([]);
     const [currentDate, setCurrentDate] = useState("");
     const [depts, setDepts] = useState([]);
@@ -22,8 +22,8 @@ function Attendence() {
     const [viewtraineeattendence,setViewtraineeattendence]=useState(false)
     const [selectedDate, setSelectedDate] = useState(null);
     const [displaytrainerattendence,setDisplaytrainerattendence]=useState([])
-    const [attendenceon,setAttendenceon]=useState(false)
-    const [titleon,seTtitleon]=useState(true)
+    const [attendenceon,setAttendenceon]=useState(true)
+    const [titleon,seTtitleon]=useState(false)
 
     const [selecttab,setSelecttab]=useState(false)
     const [deptss, setDeptss] = useState([]);
@@ -108,6 +108,30 @@ function Attendence() {
                 console.log("error", error);
             });    
     }
+
+    useEffect(()=>{
+        const type = { usertype: "Trainer" };
+
+        axios.get('http://127.0.0.1:8000/myapp/allusersprofile/', { params: type })
+            .then(response => {
+                setTrainerprofile(response.data);
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.log("error", error);
+            });
+    },[])
+
+    useEffect(()=>{
+        axios.get('http://127.0.0.1:8000/myapp/departments/')
+        .then(response => {
+            setDepts(response.data);
+            console.log(response.data);
+        })
+        .catch(error => {
+            console.log("error", error);
+        });    
+    },[])
 
 
     useEffect(() => {
@@ -372,9 +396,9 @@ function Attendence() {
                     <div className="flex flex-col md:flex-row justify-center h-2/4 w-full md:mt-1">
                         <div className="container mx-auto px-4 sm:px-8 md:mt-1">
                             <div className="py-8 md:mt-1">
-                                <div className="my-2 flex sm:flex-row flex-col md:mt-1 mt-16 ">
+                                <div className="my-2 flex sm:flex-row flex-col md:mt-1 mt-40 ">
                                     <div className="flex">
-                                        <div className="relative">
+                                        <div className="relative ">
                                             <select onChange={(e) => { setDept(e.target.value) }}
                                                 className="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r border-b border-l border-r block w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500">
                                                 <option>All</option>

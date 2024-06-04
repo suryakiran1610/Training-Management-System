@@ -81,7 +81,7 @@ function Login(){
                             <input type="password" placeholder="Password" onChange={(e)=>setPassword(e.target.value)} required className="w-2/4 mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-yellow-400 focus:border-yellow-400" />
                         </div>
                         <div className="mt-7 w-full flex justify-center">
-                            <button type="submit" className="w-6/12 bg-blue-400 text-white py-2 px-4 rounded-md hover:bg-yellow-500 focus:outline-none focus:bg-yellow-500">Register</button>
+                            <button type="submit" className="w-6/12 bg-blue-400 text-white py-2 px-4 rounded-md hover:bg-yellow-500 focus:outline-none focus:bg-yellow-500">Login</button>
                         </div>
                     </div> 
                 </form> 

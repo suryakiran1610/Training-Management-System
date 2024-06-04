@@ -4,11 +4,13 @@ import { ToastContainer, toast } from 'react-toastify';
 import { IoCloudDownload } from "react-icons/io5";
 import { Image } from 'antd';
 import { saveAs } from 'file-saver';
+import { TiTick } from "react-icons/ti";
+import { ImCross } from "react-icons/im";
 
 
 
 function Users() {
-    const [trainers, setTrainers] = useState(false);
+    const [trainers, setTrainers] = useState(true);
     const [trainees, setTrainees] = useState(false);
     const [usertypedetails,setUsertypedetails]=useState(false)
     const[toggleedit,setToggleedit]=useState(false)
@@ -25,6 +27,11 @@ function Users() {
     const[first,setfirst]=useState("")
     const[second,setsecond]=useState("")
     const[image,setImage]=useState(null)
+
+    
+    const [users, setUsers] = useState([]);
+    const [emailExists, setEmailExists] = useState(false);
+    const [phoneExists,setPhoneExists]=useState(false);
 
 
     const trainer = () => {
@@ -44,6 +51,19 @@ function Users() {
                 console.log("error", error);
             });
     };
+
+    useEffect(()=>{
+        const type = { usertype: "Trainer" };
+
+        axios.get('http://127.0.0.1:8000/myapp/allusersprofile/', { params: type })
+            .then(response => {
+                setTrainerprofile(response.data);
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.log("error", error);
+            });
+    },[])
 
     const trainee = () => {
         setTrainees(true);
@@ -176,9 +196,9 @@ function Users() {
         if (phone !== "") formData.append('phone',phone);
         if (first !== "") formData.append('first_name',first);
         if (second !== "") formData.append('last_name',second);
-        if (image !== "") formData.append('user_image',image)
+        if (image) formData.append('user_image', image);
 
-        if (formData.has('username') || formData.has('email') || formData.has('phone') || formData.has('first_name') || formData.has('last_name') || formData.has('user_image')) {
+        if (formData.has('username') || formData.has('email') || formData.has('phone') || formData.has('first_name') || formData.has('last_name')  || formData.has('user_image') ) {
         axios.put('http://127.0.0.1:8000/myapp/profiledetails/'+userid,formData)
         .then(response => {
             console.log(response.data)
@@ -213,6 +233,24 @@ function Users() {
         });
     }
     }
+
+    useEffect(() => {
+        axios.get('http://127.0.0.1:8000/myapp/users/')
+        .then(response => {
+            setUsers(response.data);
+            console.log(response.data);
+        })
+        .catch(error => {
+            console.log("error", error);
+        });
+    }, []);
+
+    useEffect(() => {
+        setEmailExists(users.some(user => user.email === email));
+    }, [email, users]);
+    useEffect(() => {
+        setPhoneExists(users.some(user => user.phone === phone));
+    }, [phone, users]);
 
     return (
         <>
@@ -406,14 +444,36 @@ function Users() {
                                                 <label className="md:mr-1 md:text-base text-sm" >Last Name:</label>
                                                 <input type="text" defaultValue={userprofile.last_name} onChange={(e)=>setsecond(e.target.value)} className="bg-slate-200 rounded-md border-none focus:outline-none" />
                                             </div>
-                                            <div className="flex mb-1 w-11/12 md:justify-evenly justify-center items-center">
-                                                <label className="md:mr-1 md:text-base text-sm" >Phone:</label>
-                                                <input type="text" defaultValue={userprofile.phone} onChange={(e)=>setPhone(e.target.value)} className="bg-slate-200 rounded-md border-none focus:outline-none ml-7" />
-                                            </div>
-                                            <div className="flex mb-1 w-11/12 md:justify-evenly justify-center items-center">
-                                                <label className="md:mr-1 md:text-base text-sm" >Email:</label>
-                                                <input type="text" defaultValue={userprofile.email} onChange={(e)=>setEmail(e.target.value)} className="bg-slate-200 rounded-md border-none focus:outline-none ml-8"  />
-                                            </div>
+                            <div className="mb-1 flex justify-evenly w-11/12">
+                            <div className="flex justify-center items-center">
+                                <label className="mr-1" >Phone:</label>
+                                <input type="text" defaultValue={userprofile.phone} onChange={(e)=>setPhone(e.target.value)} className="bg-slate-200 rounded-md border-none focus:outline-none md:ml-7 ml-2" />
+                            </div>
+                            {phoneExists ? (
+                                <div className="w-1 m-0 mt-1">
+                                    <ImCross className="text-red-600 text-sm" />
+                                </div>
+                            ) : (
+                                <div className="w-1 m-0 mt-1">
+                                    <TiTick className="text-green-600 text-xl" />
+                                </div>
+                            )}
+                            </div>
+                            <div className="mb-1 flex justify-evenly w-11/12">
+                            <div className="flex justify-center items-center">
+                                <label className="mr-1">Email:</label>
+                                <input type="email" defaultValue={userprofile.email} onChange={(e) => setEmail(e.target.value)}  className="bg-slate-200 rounded-md border-none focus:outline-none md:ml-7 ml-2" />
+                            </div>
+                            {emailExists ? (
+                                <div className="w-1 m-0 mt-1">
+                                    <ImCross className="text-red-600 text-sm" />
+                                </div>
+                            ) : (
+                                <div className="w-1 m-0 mt-1">
+                                    <TiTick className="text-green-600 text-xl" />
+                                </div>
+                            )}
+                            </div>
                                             <div className="flex mb-1 w-11/12 md:justify-evenly justify-center items-center">
                                                 <label className="md:mr-1 md:text-base text-sm" >username:</label>
                                                 <input type="text" defaultValue={userprofile.username} onChange={(e)=>setUsername(e.target.value)} className="bg-slate-200 rounded-md border-none focus:outline-none ml-1" />
@@ -422,10 +482,17 @@ function Users() {
                                             <div className="flex mb-1 w-11/12 md:justify-evenly justify-center items-center">
                                                 <input type="file" className="" onChange={(e)=>setImage(e.target.files[0])}/>
                                             </div>
+                                            {emailExists || phoneExists ?(
                                             <div className=" flex mt-3">
+                                                <button type="submit" disabled className="text-white bg-gray-700 hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-md text-sm md:px-6 px-4 md:py-2.0 py-1.5 text-center me-2 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">Save</button>
+                                                <button onClick={() => { setToggleedit(false),setTogglecertificates(true) }} type="button" className="text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm md:px-6 px-4 md:py-2.0 py-1.5 text-center me-2 mb-2 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">Cancel</button>
+                                            </div>
+                                            ):(
+                                                <div className=" flex mt-3">
                                                 <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm md:px-6 px-4 md:py-2.0 py-1.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Save</button>
                                                 <button onClick={() => { setToggleedit(false),setTogglecertificates(true) }} type="button" className="text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-4 focus:ring-orange-300 font-medium rounded-md text-sm md:px-6 px-4 md:py-2.0 py-1.5 text-center me-2 mb-2 dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">Cancel</button>
                                             </div>
+                                            )}
                                         </form>
                                     </div>
                                 </div>

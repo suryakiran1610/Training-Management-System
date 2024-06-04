@@ -11,7 +11,7 @@ function Leave2(){
     const [from,setFrom]=useState("")
     const [to,setTo]=useState("")
     const [toggleviewleave,setToggleviewleave]=useState(false)
-    const [toggleadleave,setToggleaddleave]=useState(false)
+    const [toggleadleave,setToggleaddleave]=useState(true)
     const [traineefilter,setTraineefilter]=useState([])
 
 
@@ -57,6 +57,7 @@ function Leave2(){
         formData.append('usertype', decoded.user)
         formData.append('message', reason);
 
+        if(reason,from,to){
         axios.post('http://127.0.0.1:8000/myapp/leavesubmit/', formData)
             .then(response => {
                 console.log(response.data);
@@ -92,6 +93,18 @@ function Leave2(){
             .catch(error => {
                 console.log("error", error);
             });
+        }else {
+            toast.error('Please provide Details', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }            
 
     }
 

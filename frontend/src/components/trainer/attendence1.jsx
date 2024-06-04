@@ -12,13 +12,13 @@ import './CustomDatePicker1.css';
 
 function Attendance1(){
 
-    const [traineeattendence, setTraineeattendence] = useState(false);
+    const [traineeattendence, setTraineeattendence] = useState(true);
     const [traineeprofile, setTraineeprofile] = useState([]);
     const [batch,setBatch]=useState([])
     const [batch1,setBatch1]=useState([])
     const [viewbtn,setViewbtn]=useState(true)
-    const [attendenceon,setAttendenceon]=useState(false)
-    const [titleon,seTtitleon]=useState(true)
+    const [attendenceon,setAttendenceon]=useState(true)
+    const [titleon,seTtitleon]=useState(false)
     const [showattends,setShowattends]=useState(false)
     const [selecttab,setSelecttab]=useState(false)
     const [currentDate, setCurrentDate] = useState("");
@@ -334,7 +334,7 @@ function Attendance1(){
                     <div className="flex flex-col md:flex-row justify-center h-2/4 w-full md:mt-1">
                         <div className="container mx-auto px-4 sm:px-8 md:mt-1">
                             <div className="py-8 md:mt-1">
-                                <div className="my-2 flex sm:flex-row flex-col md:mt-1 mt-16 ">
+                                <div className="my-2 flex sm:flex-row flex-col md:mt-1 ">
                                     <div className="flex">
                                         <div className="relative">
                                             <select onChange={(e) => { setBatchh(e.target.value) }}

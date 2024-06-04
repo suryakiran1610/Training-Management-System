@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from 'axios';
 
 function Leave() {
-    const [trainerApplications, setTrainerApplications] = useState(false);
+    const [trainerApplications, setTrainerApplications] = useState(true);
     const [traineeApplications, setTraineeApplications] = useState(false);
 
     const [trainerfilter,setTrainerfilter]=useState([])
@@ -24,6 +24,18 @@ function Leave() {
                 console.log("error", error);
             });    
     };
+
+    useEffect(()=>{
+        const type = { usertype: "Trainer" };
+        axios.get('http://127.0.0.1:8000/myapp/leavefilter/', { params: type })
+            .then(response => {
+                setTrainerfilter(response.data);
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.log("error", error);
+            });    
+    },[])
 
     const trainee = (e) => {
         e.preventDefault()
