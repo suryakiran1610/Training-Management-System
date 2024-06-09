@@ -195,13 +195,16 @@ function Dashboard2(props){
 
     const handlepasswordsubmit=(e)=>{
         e.preventDefault()
+
+        if (newpassword && numberMet && specialCharMet && minLengthMet) {
+
             const token=Cookies.get('token')
             const decoded=jwtDecode(token)
             const data={
                 "newpass":newpassword,
                 "userid":decoded.user_id
             };
-            if (newpassword) {
+
             console.log(data)
                 axios.put('http://127.0.0.1:8000/myapp/verifypassword/',data)
                 .then(response => {
@@ -232,7 +235,7 @@ function Dashboard2(props){
                     });
                 });
             } else {
-                toast.error('Please enter a new password', {
+                toast.error('Password does not meet the required criteria', {
                     position: "top-right",
                     autoClose: 5000,
                     hideProgressBar: false,

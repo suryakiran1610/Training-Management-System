@@ -195,19 +195,21 @@ function Profile(props){
     }
 
 
-    const handlepasswordsubmit=(e)=>{
-        e.preventDefault()
-            const token=Cookies.get('token')
-            const decoded=jwtDecode(token)
-            const data={
-                "newpass":newpassword,
-                "userid":decoded.user_id
+    const handlepasswordsubmit = (e) => {
+        e.preventDefault();
+    
+        if (newpassword && numberMet && specialCharMet && minLengthMet) {
+            const token = Cookies.get('token');
+            const decoded = jwtDecode(token);
+            const data = {
+                "newpass": newpassword,
+                "userid": decoded.user_id
             };
-            console.log(data)
-            if(newpassword){
-                axios.put('http://127.0.0.1:8000/myapp/verifypassword/',data)
+            console.log(data);
+    
+            axios.put('http://127.0.0.1:8000/myapp/verifypassword/', data)
                 .then(response => {
-                    console.log(response.data)
+                    console.log(response.data);
                     toast.success('Password Updated Successfully', {
                         position: "top-right",
                         autoClose: 5000,
@@ -233,19 +235,20 @@ function Profile(props){
                         theme: "colored",
                     });
                 });
-            }else {
-                toast.error('Please enter a new password', {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                });
-            }        
+        } else {
+            toast.error('Password does not meet the required criteria', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }
     }
+    
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/myapp/users/')
         .then(response => {

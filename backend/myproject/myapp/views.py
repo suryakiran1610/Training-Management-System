@@ -471,6 +471,8 @@ def Getallnotifications(request):
     return Response(serializer.data)    
 
 
+
+
 @api_view(['PUT'])
 def Activateuser(request):
     user_id = request.data.get('userid') 
