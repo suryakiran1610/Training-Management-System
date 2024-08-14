@@ -42,11 +42,9 @@ The frontend is developed using Vite and React. It includes various pages for lo
    ```bash
    cd frontend
 2.Install the dependencies:
-   ```bash
   npm install
 
 3.Start the development server:
-   ```bash
   npm run dev
 
 Project Files
