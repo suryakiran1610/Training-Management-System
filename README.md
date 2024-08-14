@@ -30,104 +30,91 @@ The **Training Department Management System** is a comprehensive web application
   - Access class schedules and attendance dashboard.
   - Request leave.
 
-Project Structure
-Frontend (Vite + React)
+## Project Structure
+
+### Frontend (Vite + React)
 The frontend is developed using Vite and React. It includes various pages for login, registration, and separate dashboards for managers, trainers, and trainees.
 
-Installation
-Navigate to the frontend directory:
+#### Installation
 
-bash
-Copy code
-cd frontend
-Install the dependencies:
+1. Navigate to the `frontend` directory:
 
-bash
-Copy code
-npm install
-Start the development server:
+   ```bash
+   cd frontend
+2.Install the dependencies:
+  npm install
 
-bash
-Copy code
-npm run dev
+3.Start the development server:
+  npm run dev
+
 Project Files
+
 src/pages/login.jsx: Login page component.
 src/pages/register.jsx: Registration page component.
 src/pages/manager.jsx: Manager dashboard page.
 src/pages/trainee.jsx: Trainee dashboard page.
 src/pages/trainer.jsx: Trainer dashboard page.
+
+
 Backend (Django + Django REST Framework)
 The backend is powered by Django and Django REST Framework. It handles user authentication, project management, and other core functionalities.
 
 Installation
-Navigate to the backend directory:
 
-bash
-Copy code
-cd backend
-Create a virtual environment:
+1.Navigate to the backend directory:
+    cd backend
 
-bash
-Copy code
-python -m venv venv
-Activate the virtual environment:
+2.Create a virtual environment:
+    python -m venv venv
 
-On Windows:
-
-bash
-Copy code
-venv\Scripts\activate
-On macOS/Linux:
-
-bash
-Copy code
-source venv/bin/activate
-Install the dependencies:
-
-bash
-Copy code
-pip install -r requirements.txt
-Set up the database:
-
-bash
-Copy code
-python manage.py migrate
-Create a superuser:
-
-bash
-Copy code
-python manage.py createsuperuser
-Start the development server:
-
-bash
-Copy code
-python manage.py runserver
+3.Activate the virtual environment:
+    On Windows:
+        venv\Scripts\activate
+    On macOS/Linux:
+        source venv/bin/activate
+    
+4.Install the dependencies:
+    pip install -r requirements.txt
+    
+5.Set up the database:
+    python manage.py migrate
+    
+6.Create a superuser:
+    python manage.py createsuperuser
+    
+7.Start the development server:
+    python manage.py runserver
+    
 Project Files
 myproject/settings.py: Django settings file with configurations for database, JWT authentication, and email backend.
 myapp/models.py: Models for users, trainers, trainees, departments, etc.
 myapp/serializers.py: Serializers for transforming models into JSON responses.
 myapp/views.py: Views handling the API logic and responses.
 urls.py: URL routing for the application.
+
 Database
-Database Engine: MySQL
-Database Name: (to be filled)
-User: (to be filled)
-Password: (to be filled)
-Host: localhost
-Port: 3306
+
+  Database Engine: MySQL
+  Database Name: ""
+  User: ""
+  Password: ""
+  Host: localhost
+  Port: 3306
+
 JWT Authentication
-The project uses JWT (JSON Web Token) for authentication, with a token lifetime of 10 days for access tokens.
+  The project uses JWT (JSON Web Token) for authentication, with a token lifetime of 10 days for access tokens.
 
 Email Backend
-The system is configured to use Gmail's SMTP server for sending confirmation emails during user registration.
+  The system is configured to use Gmail's SMTP server for sending confirmation emails during user registration.
+  Email Host: smtp.gmail.com
+  Email Port: 587
+  Email User: ""
+  Email Password: ""
 
-Email Host: smtp.gmail.com
-Email Port: 587
-Email User: (to be filled)
-Email Password: (to be filled)
 Media Files
-Media files such as profile images and degree certificates are stored in the media/ directory.
+  Media files such as profile images and degree certificates are stored in the media/ directory.
+
 Running the Application
-Make sure both the frontend and backend servers are running.
-Access the frontend via http://localhost:5173 (or the port configured in Vite).
-The backend API can be accessed via http://localhost:8000.
+  Make sure both the frontend and backend servers are running.
+  Access the frontend via http://localhost:5173 (or the port configured in Vite).
+  The backend API can be accessed via http://localhost:8000.
