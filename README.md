@@ -37,15 +37,23 @@ The frontend is developed using Vite and React. It includes various pages for lo
 
 #### Installation
 
-1. Navigate to the `frontend` directory:
+1. Navigate to the frontend directory:
 
-   ```bash
+   ```
    cd frontend
+   ```
+   
 2.Install the dependencies:
-  npm install
+
+  ```
+   npm install
+  ```
 
 3.Start the development server:
+
+```
   npm run dev
+```
 
 Project Files
 
@@ -62,28 +70,43 @@ The backend is powered by Django and Django REST Framework. It handles user auth
 Installation
 
 1.Navigate to the backend directory:
+```
     cd backend
+```
 
 2.Create a virtual environment:
+```
     python -m venv venv
-
+```
 3.Activate the virtual environment:
     On Windows:
+    ```
         venv\Scripts\activate
+        ```
     On macOS/Linux:
+    ```
         source venv/bin/activate
+        ```
     
 4.Install the dependencies:
+```
     pip install -r requirements.txt
+```
     
 5.Set up the database:
+```
     python manage.py migrate
+```
     
 6.Create a superuser:
+```
     python manage.py createsuperuser
+```
     
 7.Start the development server:
+```
     python manage.py runserver
+```
     
 Project Files
 myproject/settings.py: Django settings file with configurations for database, JWT authentication, and email backend.
@@ -93,23 +116,26 @@ myapp/views.py: Views handling the API logic and responses.
 urls.py: URL routing for the application.
 
 Database
-
+```
   Database Engine: MySQL
   Database Name: ""
   User: ""
   Password: ""
   Host: localhost
   Port: 3306
+```
 
 JWT Authentication
   The project uses JWT (JSON Web Token) for authentication, with a token lifetime of 10 days for access tokens.
 
 Email Backend
   The system is configured to use Gmail's SMTP server for sending confirmation emails during user registration.
+  ```
   Email Host: smtp.gmail.com
   Email Port: 587
   Email User: ""
   Email Password: ""
+```
 
 Media Files
   Media files such as profile images and degree certificates are stored in the media/ directory.
