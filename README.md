@@ -30,6 +30,23 @@ The **Training Department Management System** is a comprehensive web application
   - Access class schedules and attendance dashboard.
   - Request leave.
 
+## Technologies Used
+- **Backend**: Django, Django REST Framework
+- **Frontend**: React Vite, Tailwind CSS
+- **Database**: MySQL
+
+## Installation Guide
+
+### Prerequisites
+Ensure the following are installed:
+- **Node.js** (v14+)
+- **npm** (v6+) or **Yarn**
+- **Python** (v3.8+)
+- **MySQL** (v5.7+)
+- **pip** (Python package installer)
+- **Virtualenv** (for Python virtual environments)
+- **Git** (optional but recommended)
+
 ## Project Structure
 
 ### Frontend (Vite + React)
